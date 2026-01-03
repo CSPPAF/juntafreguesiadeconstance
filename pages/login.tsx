@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
+import Link from "next/link";
 
 export default function Login() {
   const [nif, setNif] = useState("");
@@ -69,7 +70,7 @@ export default function Login() {
             </button>
 
             <div className={styles.forgot}>
-              <a href="/recuperar-senha">Esqueceu a palavra-passe?</a>
+              <Link href="/recuperar-senha">Esqueceu a palavra-passe?</Link>
             </div>
           </form>
         </div>

@@ -6,8 +6,11 @@ import FormularioContato from './FormularioContato'
 import RegulamentoModal from './RegulamentoModal'
 import FormularioRecrutamento from "@/components/FormularioRecrutamento"
 import FormularioDenuncia from './FormularioDenuncia'
+import React from 'react'
 
-const secções = {
+type SecaoFuncional = (props: { onOpenForm: () => void }) => React.ReactNode
+
+const secções: Record<string, React.ReactNode | SecaoFuncional> = {
   'O Centro': (
     <div className="space-y-6 text-gray-700">
       <section className="space-y-3">
@@ -347,19 +350,25 @@ export default function Footer() {
 
       {/* Modal dinâmico */}
       {modalAberto && (
-		  <Modal
-			title={modalAberto}
-			onClose={() => {
-			  setModalAberto(null)
-			  setMostrarForm(false)
-			}}
-			open={true}
-		  >
-			{typeof secções[modalAberto as keyof typeof secções] === 'function'
-			  ? (secções[modalAberto as keyof typeof secções] as any)({ onOpenForm: () => setMostrarForm(true) })
-			  : secções[modalAberto as keyof typeof secções]}
-		  </Modal>
-	  )}
+        <Modal
+          title={modalAberto}
+          onClose={() => {
+            setModalAberto(null)
+            setMostrarForm(false)
+          }}
+          open={true}
+        >
+          {(() => {
+            const secao = secções[modalAberto]
+
+            if (typeof secao === 'function') {
+              return secao({ onOpenForm: () => setMostrarForm(true) })
+            }
+
+            return secao
+          })()}
+        </Modal>
+      )}
 	  
 	  {mostrarForm && (
 		  <Modal

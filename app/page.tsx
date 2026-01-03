@@ -11,6 +11,7 @@ import Carousel1 from '@/components/Carousel1'
 import CarouselcrecheI from '@/components/CarouselcrecheI'
 import CarouselcrecheII from '@/components/CarouselcrecheII'
 import Carouseljardim from '@/components/Carouseljardim'
+import Link from "next/link";
 
 const imagens = [
   '/galeria/1.png',
@@ -61,12 +62,12 @@ export default function HomePage() {
 			
 			  {/* Direita: Botão Área Reservada */}
 			  <div className="w-full md:w-auto flex justify-start md:justify-end">
-			    <a
+			    <Link
 			      href="/login"
 			      className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition w-full md:w-auto text-center"
 			    >
 			      Área Reservada
-			    </a>
+			    </Link>
 			  </div>
 
 			</header>

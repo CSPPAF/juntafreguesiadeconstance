@@ -10,6 +10,12 @@ export const config = {
   },
 }
 
+// Tipo correto para ficheiro recebido pelo formidable
+type UploadedFile = File & {
+  filepath?: string
+  path?: string
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Método não permitido' })
@@ -25,22 +31,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const { nomecompleto, nascimento, email, telefone, cargo, apresentacao } = fields
     const rawCurriculo = files.curriculo
-    let curriculo: File | undefined
+    let curriculo: UploadedFile | undefined
 
     if (Array.isArray(rawCurriculo)) {
-      curriculo = rawCurriculo[0]
+      curriculo = rawCurriculo[0] as UploadedFile
     } else {
-      curriculo = rawCurriculo as File | undefined
+      curriculo = rawCurriculo as UploadedFile | undefined
     }
 
     if (
-      !nomecompleto || !nascimento || !email ||
-      !telefone || !cargo || !apresentacao || !curriculo
+      !nomecompleto ||
+      !nascimento ||
+      !email ||
+      !telefone ||
+      !cargo ||
+      !apresentacao ||
+      !curriculo
     ) {
       return res.status(400).json({ message: 'Preencha todos os campos obrigatórios' })
     }
 
-    const filepath = (curriculo as File).filepath || (curriculo as any).path
+    // 👉 CORREÇÃO AQUI (sem any)
+    const filepath = curriculo.filepath ?? curriculo.path
 
     if (!filepath || !fs.existsSync(filepath)) {
       return res.status(400).json({ message: 'Ficheiro inválido ou não encontrado' })
@@ -86,26 +98,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         html: `
           <p>Cara/o ${nomecompleto},</p>
           <p>Acusamos a receção da sua candidatura e agradecemos o seu interesse em fazer parte da nossa equipa.</p>
-          <p>Todos os CVs são analisados e considerados quando surge uma nova oportunidade. Assim que tal aconteça será contactada/o através dos dados que forneceu no formulário.</p>
-          <p>A apresentação de candidatura a emprego é confidencial.</p>
-          <p>Informamos que os dados fornecidos no seu CV, serão guardados na nossa base de dados durante 5 anos, apenas para efeitos de avaliação do seu curriculum para possível preenchimento de vagas.</p>
-          <p>Os dados que ora nos deu a conhecer serão tratados, por meios automatizados ou não, nos termos previstos na política de privacidade.</p>
-          <p>Caso não deseje a conservação da sua documentação, pode recusa-lo respondendo para o e-mail contabilidade@centropadreangelo.pt, em conformidade com a Lei nº 67/98 de Proteção de Dados Pessoais e de acordo com o Regulamento (UE) 2016/679 Do Parlamento Europeu e do Conselho de 27 de Abril de 2016.</p>
-          <p>Se quiser desistir da Candidatura, deve enviar e-mail para contabilidade@centropadreangelo.pt.</p>
-          
-          <p>Com os melhores cumprimentos,</p>
-          
-          <p>Centro Social Paroquial Padre Ângelo Ferreira Pinto,</p>
+          <p>Todos os CVs são analisados e considerados quando surge uma nova oportunidade.</p>
 
-          <hr />
-          <p>A sua candidatura:</p>
-          <p><strong>Nome Completo:</strong> ${nomecompleto}</p>
-          <p><strong>Data de nascimento:</strong> ${nascimento}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Contacto Telefónico:</strong> ${telefone}</p>
-          <p><strong>Cargo a que se candidata:</strong> ${cargo}</p>
-          <p><strong>Apresentação:</strong> ${apresentacao}</p>
-          <p>Este email foi enviado por um formulário de contacto em Centro Social Paroquial Padre Ângelo Ferreira Pinto https://centropadreangelo.pt</p>
+          <p>Com os melhores cumprimentos,</p>
+          <p>Centro Social Paroquial Padre Ângelo Ferreira Pinto</p>
         `,
       })
 
