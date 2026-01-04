@@ -44,7 +44,7 @@ export default function MenuMobile() {
       {/* Botão hambúrguer */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white p-3 rounded-md"
+        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white py-1 p-3 rounded-md"
         aria-label="Abrir menu"
       >
         ☰
