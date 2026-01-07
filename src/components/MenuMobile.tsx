@@ -2,133 +2,137 @@
 
 import { useState } from 'react'
 
-export default function MenuMobile() {
-  const [open, setOpen] = useState(false)
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
+type MenuItem = {
+  label: string
+  href?: string
+  submenu?: MenuItem[]
+}
 
-  const links = [
-    {
-      label: 'Início',
-      href: '#mensagem-presidente',
-    },
+type Props = {
+  className?: string
+}
+
+export default function MenuMobile({ className = '' }: Props) {
+  const [open, setOpen] = useState(false)
+  const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set())
+
+  const links: MenuItem[] = [
+    { label: 'Início', href: '#mensagem-presidente' },
     {
       label: 'Freguesia',
       submenu: [
-        { label: 'História', href: '#historia' },
-        { label: 'Património', href: '#patrimonio' },
-        { label: 'Localização', href: '#localizacao' },
+        {
+          label: 'Junta de Freguesia',
+          submenu: [
+            { label: 'Executivo', href: '#executivo' },
+            { label: 'Gestão Autárquica', href: '#autarquica' },
+            { label: 'Recursos Humanos', href: '#humanos' },
+          ],
+        },
+        {
+          label: 'Assembleia de Freguesia',
+          submenu: [
+            { label: 'Editais', href: '#editais' },
+            { label: 'Regimento', href: '#regimento' },
+          ],
+        },
+        { label: 'Espaço Cidadão', href: '#cidadao' },
       ],
     },
     {
-      label: 'Transparência',
+      label: 'Áreas de Intervenção',
       submenu: [
-        { label: 'Presidente', href: '#presidente' },
-        { label: 'Executivo', href: '#executivo' },
+        { label: 'Ação Social', href: '#social' },
+        { label: 'Educação', href: '#educacao' },
       ],
     },
     {
-      label: 'Informações',
-      submenu: [
-        { label: 'Contactos', href: '#contactos' },
-        { label: 'Horários', href: '#horarios' },
-      ],
+      label: 'Freguesia Digital',
+      submenu: [{ label: 'Comunicar Ocorrência', href: '#ocorrencia' }],
     },
   ]
 
-  const toggleSubmenu = (label: string) => {
-    setOpenSubmenu(openSubmenu === label ? null : label)
+  const toggleSubmenu = (key: string) => {
+    setOpenSubmenus(prev => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
   }
 
+  const closeAll = () => {
+    setOpen(false)
+    setOpenSubmenus(new Set())
+  }
+
+  const renderMenu = (items: MenuItem[], level = 0) => (
+    <ul className={`space-y-2 ${level ? 'ml-4 border-l pl-4 mt-2' : ''}`}>
+      {items.map((item, index) => {
+        const key = `${level}-${index}-${item.label}`
+        const isOpen = openSubmenus.has(key)
+
+        return (
+          <li key={key}>
+            {item.submenu ? (
+              <>
+                <button
+                  onClick={() => toggleSubmenu(key)}
+                  className="w-full flex justify-between items-center font-medium text-gray-800 hover:text-blue-600 transition"
+                >
+                  {item.label}
+                  <span>{isOpen ? '▾' : '▸'}</span>
+                </button>
+
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out
+                  ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                >
+                  {isOpen && renderMenu(item.submenu, level + 1)}
+                </div>
+              </>
+            ) : (
+              <a
+                href={item.href}
+                onClick={closeAll}
+                className="block text-sm text-gray-600 hover:text-blue-600 transition"
+              >
+                {item.label}
+              </a>
+            )}
+          </li>
+        )
+      })}
+    </ul>
+  )
+
   return (
-    <>
-      {/* Botão hambúrguer */}
+    <div className={className}>
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white py-1 px-3 rounded-md"
-        aria-label="Abrir menu"
+        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 transition"
       >
         ☰
       </button>
 
-      {/* Overlay */}
       {open && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => {
-            setOpen(false)
-            setOpenSubmenu(null)
-          }}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40" onClick={closeAll} />
       )}
 
-      {/* Menu */}
       <nav
         className={`fixed top-0 right-0 h-full w-72 bg-white z-50 transform transition-transform duration-300
         ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className="p-6">
           <button
-            onClick={() => {
-              setOpen(false)
-              setOpenSubmenu(null)
-            }}
-            className="mb-6 text-gray-600"
+            onClick={closeAll}
+            className="mb-6 text-gray-500 hover:text-gray-800 transition"
           >
             ✕ Fechar
           </button>
 
-          <ul className="space-y-4">
-            {links.map(link => (
-              <li key={link.label}>
-                {/* Item simples */}
-                {!link.submenu && (
-                  <a
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="block text-gray-800 font-medium hover:text-blue-600"
-                  >
-                    {link.label}
-                  </a>
-                )}
-
-                {/* Item com submenu */}
-                {link.submenu && (
-                  <>
-                    <button
-                      onClick={() => toggleSubmenu(link.label)}
-                      className="w-full flex justify-between items-center text-gray-800 font-medium"
-                    >
-                      {link.label}
-                      <span className="text-sm">
-                        {openSubmenu === link.label ? '▾' : '▸'}
-                      </span>
-                    </button>
-
-                    {openSubmenu === link.label && (
-                      <ul className="mt-2 ml-4 space-y-2">
-                        {link.submenu.map(sub => (
-                          <li key={sub.href}>
-                            <a
-                              href={sub.href}
-                              onClick={() => {
-                                setOpen(false)
-                                setOpenSubmenu(null)
-                              }}
-                              className="block text-sm text-gray-600 hover:text-blue-600"
-                            >
-                              {sub.label}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
+          {renderMenu(links)}
         </div>
       </nav>
-    </>
+    </div>
   )
 }
