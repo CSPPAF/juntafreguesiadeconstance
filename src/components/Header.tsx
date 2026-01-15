@@ -50,8 +50,8 @@ export default function Header({ header }: HeaderProps) {
             <Image
               src={urlFor(header.logo)}
               alt="Logotipo"
-              width={96}
-              height={96}
+              width={200}
+              height={200}
               className="object-contain"
             />
           )}
