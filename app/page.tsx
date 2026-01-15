@@ -1,63 +1,371 @@
 'use client'
 
-import { useCallback, useRef, useEffect } from 'react'
-import MensagemPresidente from "@/components/MensagemPresidente"
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react'
+
+import Footer from '@/components/Footer'
 import MenuDesktop from '@/components/MenuDesktop'
 import MenuMobile from '@/components/MenuMobile'
-import Footer from '@/components/Footer'
-import Link from "next/link"
+import Header from '@/components/Header'
+import GallerySlider from '@/components/GallerySlider'
+import FormularioOcorrencia from '@/components/FormularioOcorrencia'
+import Calendar from '@/components/Calendar'
+import EventFilter from '@/components/EventFilter'
+import PortableTextRenderer from '@/lib/PortableTextRenderer'
+
+import { getMenu } from './getMenu'
+import { getSections } from './getSections'
+import { getHeader } from './getHeader'
+import { getNews, SanityNews } from './getNews'
+import { getEvents, SanityEvent } from './getEvents'
+import { urlFor } from './imageUrl'
 
 export default function HomePage() {
+  const [header, setHeader] = useState<any>(null)
+  const [menu, setMenu] = useState<any[]>([])
+  const [sections, setSections] = useState<any[]>([])
+  const [news, setNews] = useState<SanityNews[]>([])
+  const [events, setEvents] = useState<SanityEvent[]>([])
+  const [activeSection, setActiveSection] = useState<string>('')
+
+  const [eventType, setEventType] = useState<string | null>(null)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+
+  // 🔹 Notícias slider
+  const [newsIndex, setNewsIndex] = useState(0)
+  const NEWS_PER_PAGE = 4
+
+  /* 🔹 Carregar dados */
+  useEffect(() => {
+    getHeader().then(setHeader)
+    getMenu().then(setMenu)
+
+    getSections().then(data => {
+      setSections(data)
+      const hash = window.location.hash.replace('#', '')
+      if (hash) {
+        setActiveSection(hash)
+        return
+      }
+      if (data.length > 0) setActiveSection(data[0].slug.replace(/^#/, ''))
+    })
+
+    getNews().then(setNews)
+    getEvents().then(setEvents)
+  }, [])
+
+  /* 🔹 Hash inicial */
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (hash) setActiveSection(hash)
+  }, [])
+
+  /* 🔹 Ouvir mudanças de hash */
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace('#', '')
+      if (hash) setActiveSection(hash)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  /* 🔹 Scroll top */
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 300)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  if (!header || sections.length === 0) return null
+
+  // 🔑 HOME = primeira section do CMS
+  const homeSectionId = sections[0].slug.replace(/^#/, '')
+
+  // 🔑 Ver se é uma notícia
+  const isNewsOpen = news.some(n => n.slug === activeSection)
+
+  // 🔑 Estamos na Home?
+  const isHome = activeSection === homeSectionId || isNewsOpen
+
+  const canGoPrev = newsIndex > 0
+  const canGoNext = newsIndex + NEWS_PER_PAGE < news.length
+
+  // 🔹 Filtrar eventos por tipo	  
+  const filteredEvents = eventType
+	? events.filter(e => e.type?.toLowerCase() === eventType.toLowerCase())
+	: events
+
+  // 🔹 Evento em destaque (mais próximo no futuro)
+  const today = new Date()
+  const nextEvent = [...events]
+    .filter(e => new Date(e.date) >= today)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+
+  // 🔹 Próximos eventos (lista simples)
+  const upcomingEvents = [...events]
+    .filter(e => new Date(e.date) >= today)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
   return (
     <main id="top" className="min-h-screen scroll-smooth">
-      {/* Cabeçalho */}
-      <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between flex-wrap gap-4">
-        {/* Esquerda: Logo + Nome */}
-        <div className="flex items-center gap-4 flex-nowrap min-w-0">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-16 w-auto md:h-24"
-          />
+      <Header header={header} />
 
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800 leading-tight flex-1 min-w-0">
-            Junta Freguesia de Constance
-          </h1>
-        </div>
-      </header>
+      <div className="sticky top-0 z-50 bg-white">
+        <MenuDesktop menu={menu} className="hidden lg:block" />
+        <MenuMobile menu={menu} className="block lg:hidden" />
+      </div>
 
-      {/* Menu Desktop (apenas PC) */}
-      <MenuDesktop className="hidden lg:block" />
+      {/* ---------- SECTIONS ---------- */}
+      {sections.map(section => {
+        const sectionId = section.slug.replace(/^#/, '')
+        const isActive =
+          sectionId === homeSectionId ? isHome : sectionId === activeSection
+        const hasImage = Boolean(section.image)
 
-      {/* Menu Mobile (mobile + tablet) */}
-      <MenuMobile className="block lg:hidden" />
+        return (
+          <section
+            key={sectionId}
+            id={sectionId}
+            className={`max-w-6xl mx-auto px-6 py-16 ${
+              isActive ? 'block' : 'hidden'
+            }`}
+          >
+            <h2 className="mb-4 text-2xl font-semibold text-blue-600">
+              {section.title}
+            </h2>
 
-      {/* Botão voltar ao topo */}
-      <a
-        href="#top"
-        className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 z-50"
-        aria-label="Voltar ao topo"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+            <hr className="mb-10 border-gray-300" />
+
+            <div
+              className={`grid gap-10 ${
+                hasImage ? 'md:grid-cols-3' : 'grid-cols-1'
+              }`}
+            >
+              <div className={hasImage ? 'md:col-span-2 text-gray-700' : 'text-gray-700'}>
+                <PortableTextRenderer value={section.content} />
+              </div>
+
+              {hasImage && (
+                <Image
+                  src={urlFor(section.image)}
+                  alt={section.title}
+                  width={220}
+                  height={280}
+                  className="rounded-md shadow-md object-cover"
+                />
+              )}
+            </div>
+
+            {/* Fotografias (Executivo) */}
+            {section.photographers?.length > 0 && (
+              <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+                {section.photographers.map((p, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center text-center transition-transform duration-300 hover:scale-105"
+                  >
+                    {p.photo && (
+                      <div className="w-[150px] h-[150px] overflow-hidden rounded-full shadow-md">
+                        <Image
+                          src={urlFor(p.photo)}
+                          alt={p.name || `Fotógrafa ${idx + 1}`}
+                          width={150}
+                          height={150}
+                          className="object-cover w-full h-full transition-transform duration-500 hover:scale-110"
+                        />
+                      </div>
+                    )}
+
+                    {p.name && (
+                      <h3 className="mt-4 text-blue-600 text-lg font-semibold">
+                        {p.name}
+                      </h3>
+                    )}
+
+                    {p.role && (
+                      <p className="mt-1 text-gray-700 font-medium">{p.role}</p>
+                    )}
+
+                    {p.description && (
+                      <p className="mt-2 text-gray-600 text-sm">{p.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {section.gallery?.length > 0 && (
+              <div className="mt-16">
+                <GallerySlider images={section.gallery} />
+              </div>
+            )}
+
+            {section.showFormularioOcorrencias && (
+              <div className="mt-8">
+                <FormularioOcorrencia />
+              </div>
+            )}
+          </section>
+        )
+      })}
+
+      {/* ---------- EVENTOS ---------- */}
+      {activeSection === 'eventos' && (
+        <section className="max-w-6xl mx-auto px-6 py-16">
+          <h2 className="mb-12 text-3xl font-bold text-blue-600 text-center">
+            Eventos na Freguesia
+          </h2>
+
+          {/* 🔹 Evento em destaque */}
+          {nextEvent && (
+            <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded">
+              <h3 className="text-xl font-semibold text-blue-700 mb-2">
+                Próximo Evento: {nextEvent.title}
+              </h3>
+              <p className="text-sm text-gray-700 mb-2">
+                {new Date(nextEvent.date).toLocaleDateString('pt-PT', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </p>
+              {nextEvent.image && (
+                <Image
+                  src={nextEvent.image.asset.url}
+                  alt={nextEvent.title}
+                  width={400}
+                  height={200}
+                  className="object-cover w-full rounded mb-2"
+                />
+              )}
+            </div>
+          )}
+
+          {/* 🔹 Filtro tipo de evento */}
+          <EventFilter value={eventType} onChange={setEventType} />
+
+          {/* 🔹 Calendário */}
+          <Calendar events={filteredEvents} />
+
+          {/* 🔹 Lista Próximos eventos */}
+          {upcomingEvents.length > 0 && (
+            <div className="mt-12">
+              <h3 className="text-xl font-semibold text-blue-600 mb-4">
+                Próximos Eventos
+              </h3>
+              <ul className="space-y-2">
+                {upcomingEvents.map(e => (
+                  <li key={e.slug} className="p-3 border rounded hover:bg-blue-50 transition">
+                    <span className="font-medium text-gray-800">{e.title}</span> —{' '}
+                    <span className="text-gray-600">
+                      {new Date(e.date).toLocaleDateString('pt-PT', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ---------- NOTÍCIAS (só na Home) ---------- */}
+      {isHome && news.length > 0 && (
+        <section className="max-w-6xl mx-auto px-6 py-16">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold text-blue-600">
+              Notícias da Junta de Freguesia
+            </h2>
+          </div>
+
+          <div className="relative">
+            {canGoPrev && (
+              <button
+                onClick={() => setNewsIndex(newsIndex - NEWS_PER_PAGE)}
+                className="absolute -left-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2"
+              >
+                <ChevronLeft />
+              </button>
+            )}
+
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              {news.slice(newsIndex, newsIndex + NEWS_PER_PAGE).map(item => (
+                <div key={item.slug} className="bg-white rounded-xl shadow-md flex flex-col">
+                  {item.image && (
+                    <Image
+                      src={urlFor(item.image)}
+                      alt={item.title}
+                      width={400}
+                      height={200}
+                      className="h-44 w-full object-cover rounded-t-xl"
+                    />
+                  )}
+
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-semibold mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-500 mb-3">
+                      {new Date(item.date).toLocaleDateString('pt-PT')}
+                    </p>
+                    {item.summary && (
+                      <p className="text-sm text-gray-700 line-clamp-3 mb-4">
+                        {item.summary}
+                      </p>
+                    )}
+                    <a
+                      href={`#${item.slug}`}
+                      onClick={() => setActiveSection(item.slug)}
+                      className="mt-auto text-blue-600 font-medium hover:underline"
+                    >
+                      Ler mais →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {canGoNext && (
+              <button
+                onClick={() => setNewsIndex(newsIndex + NEWS_PER_PAGE)}
+                className="absolute -right-6 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2"
+              >
+                <ChevronRight />
+              </button>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ---------- NOTÍCIA COMPLETA ---------- */}
+      {news.map(item => (
+        <section
+          key={item.slug}
+          id={item.slug}
+          className={`max-w-6xl mx-auto px-6 py-16 ${
+            item.slug === activeSection ? 'block' : 'hidden'
+          }`}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 15l7-7 7 7"
-          />
-        </svg>
-      </a>
+          <h2 className="text-3xl font-bold text-blue-600 mb-4">{item.title}</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            {new Date(item.date).toLocaleDateString('pt-PT')}
+          </p>
+          <PortableTextRenderer value={item.content} />
+        </section>
+      ))}
 
-      {/* Conteúdo principal */}
-      <MensagemPresidente />
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 bg-blue-600 p-3 text-white rounded-full shadow"
+        >
+          <ChevronUp size={22} />
+        </button>
+      )}
 
-      {/* Rodapé */}
       <Footer />
     </main>
   )

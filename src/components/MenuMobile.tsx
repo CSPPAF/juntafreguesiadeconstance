@@ -1,56 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-
-type MenuItem = {
-  label: string
-  href?: string
-  submenu?: MenuItem[]
-}
+import { MenuItem } from './MenuDesktop'
 
 type Props = {
+  menu: MenuItem[]
   className?: string
 }
 
-export default function MenuMobile({ className = '' }: Props) {
+export default function MenuMobile({ menu, className = '' }: Props) {
   const [open, setOpen] = useState(false)
   const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set())
-
-  const links: MenuItem[] = [
-    { label: 'Início', href: '#mensagem-presidente' },
-    {
-      label: 'Freguesia',
-      submenu: [
-        {
-          label: 'Junta de Freguesia',
-          submenu: [
-            { label: 'Executivo', href: '#executivo' },
-            { label: 'Gestão Autárquica', href: '#autarquica' },
-            { label: 'Recursos Humanos', href: '#humanos' },
-          ],
-        },
-        {
-          label: 'Assembleia de Freguesia',
-          submenu: [
-            { label: 'Editais', href: '#editais' },
-            { label: 'Regimento', href: '#regimento' },
-          ],
-        },
-        { label: 'Espaço Cidadão', href: '#cidadao' },
-      ],
-    },
-    {
-      label: 'Áreas de Intervenção',
-      submenu: [
-        { label: 'Ação Social', href: '#social' },
-        { label: 'Educação', href: '#educacao' },
-      ],
-    },
-    {
-      label: 'Freguesia Digital',
-      submenu: [{ label: 'Comunicar Ocorrência', href: '#ocorrencia' }],
-    },
-  ]
 
   const toggleSubmenu = (key: string) => {
     setOpenSubmenus(prev => {
@@ -65,39 +25,52 @@ export default function MenuMobile({ className = '' }: Props) {
     setOpenSubmenus(new Set())
   }
 
+  const handleClick = (href?: string) => {
+    closeAll()
+    if (!href) return
+
+    if (href.startsWith('#')) {
+      // ✅ atualiza o hash → SPA funciona
+      window.location.hash = href
+    } else {
+      window.location.href = href
+    }
+  }
+
   const renderMenu = (items: MenuItem[], level = 0) => (
-    <ul className={`space-y-2 ${level ? 'ml-4 border-l pl-4 mt-2' : ''}`}>
+    <ul className={`space-y-2 ${level > 0 ? 'ml-4 mt-2 border-l pl-3' : ''}`}>
       {items.map((item, index) => {
         const key = `${level}-${index}-${item.label}`
         const isOpen = openSubmenus.has(key)
 
         return (
           <li key={key}>
-            {item.submenu ? (
+            {item.children ? (
               <>
                 <button
                   onClick={() => toggleSubmenu(key)}
-                  className="w-full flex justify-between items-center font-medium text-gray-800 hover:text-blue-600 transition"
+                  className="w-full flex justify-between items-center text-gray-800 font-medium hover:text-blue-600 transition"
+                  aria-expanded={isOpen}
                 >
-                  {item.label}
-                  <span>{isOpen ? '▾' : '▸'}</span>
+                  <span>{item.label}</span>
+                  <span className="text-sm">{isOpen ? '▾' : '▸'}</span>
                 </button>
 
                 <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out
-                  ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
                 >
-                  {isOpen && renderMenu(item.submenu, level + 1)}
+                  {isOpen && renderMenu(item.children, level + 1)}
                 </div>
               </>
             ) : (
-              <a
-                href={item.href}
-                onClick={closeAll}
-                className="block text-sm text-gray-600 hover:text-blue-600 transition"
+              <span
+                onClick={() => handleClick(item.href)}
+                className="block text-sm text-gray-600 hover:text-blue-600 transition cursor-pointer"
               >
                 {item.label}
-              </a>
+              </span>
             )}
           </li>
         )
@@ -107,30 +80,41 @@ export default function MenuMobile({ className = '' }: Props) {
 
   return (
     <div className={className}>
+      {/* Botão hambúrguer */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white px-3 py-1 rounded-md shadow hover:bg-blue-700 transition"
+        className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white py-1 px-3 rounded-md text-lg shadow-md hover:bg-blue-700 transition"
+        aria-label="Abrir menu"
+        aria-expanded={open}
       >
         ☰
       </button>
 
+      {/* Overlay */}
       {open && (
-        <div className="fixed inset-0 bg-black/50 z-40" onClick={closeAll} />
+        <div
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={closeAll}
+          aria-hidden="true"
+        />
       )}
 
+      {/* Menu lateral */}
       <nav
         className={`fixed top-0 right-0 h-full w-72 bg-white z-50 transform transition-transform duration-300
         ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        role="navigation"
       >
         <div className="p-6">
           <button
             onClick={closeAll}
             className="mb-6 text-gray-500 hover:text-gray-800 transition"
+            aria-label="Fechar menu"
           >
             ✕ Fechar
           </button>
 
-          {renderMenu(links)}
+          {renderMenu(menu)}
         </div>
       </nav>
     </div>
