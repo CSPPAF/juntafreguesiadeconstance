@@ -1,12 +1,16 @@
 "use client"
 
-import { MapContainer, TileLayer, Marker, GeoJSON, useMapEvents } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, GeoJSON, useMapEvents, useMap } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
 import { useState, useEffect } from "react"
-import constanceGeo from "../data/constance.geo.json"
+import constanceGeoRaw from "../data/constance.geo.json"
 import booleanPointInPolygon from "@turf/boolean-point-in-polygon"
 import { point } from "@turf/helpers"
+import { Feature, Polygon, MultiPolygon, GeoJsonObject } from "geojson"
+
+// Forçar tipo correto para o GeoJSON
+const constanceGeo = constanceGeoRaw as GeoJsonObject
 
 // Ícone padrão
 const icon = new L.Icon({
@@ -24,6 +28,25 @@ type Props = {
   }) => void
 }
 
+type GeoFeature = Feature<Polygon | MultiPolygon>
+
+// Componente para ajustar o mapa aos limites da freguesia
+function MapSetup() {
+  const map = useMap()
+
+  useEffect(() => {
+    const layer = L.geoJSON(constanceGeo)
+    const bounds = layer.getBounds()
+    map.fitBounds(bounds)
+    map.setMaxBounds(bounds)
+    map.setMinZoom(13)
+    map.setMaxZoom(18)
+  }, [map])
+
+  return null
+}
+
+// Componente que lida com cliques e marcações
 function ClickHandler({ onLocationChange }: Props) {
   const [markerPos, setMarkerPos] = useState<[number, number] | null>(null)
 
@@ -32,7 +55,7 @@ function ClickHandler({ onLocationChange }: Props) {
       const { lat, lng } = e.latlng
       const pt = point([lng, lat])
 
-      if (!booleanPointInPolygon(pt, constanceGeo as any)) {
+      if (!booleanPointInPolygon(pt, constanceGeo as GeoFeature)) {
         alert("Por favor, clique apenas dentro da freguesia de Constance.")
         return
       }
@@ -45,7 +68,6 @@ function ClickHandler({ onLocationChange }: Props) {
         )
         const data = await res.json()
 
-        // tenta pegar a rua + numero
         let morada = ""
         if (data.address?.road) {
           morada = data.address.road
@@ -54,7 +76,6 @@ function ClickHandler({ onLocationChange }: Props) {
           }
         }
 
-        // se não houver road, usa display_name completo
         if (!morada && data.display_name) {
           morada = data.display_name
         }
@@ -77,23 +98,8 @@ function ClickHandler({ onLocationChange }: Props) {
 }
 
 export default function MapOcorrencia({ onLocationChange }: Props) {
-  const [map, setMap] = useState<L.Map | null>(null)
-
-  useEffect(() => {
-    if (!map) return
-
-    const layer = L.geoJSON(constanceGeo)
-    const bounds = layer.getBounds()
-
-    map.fitBounds(bounds)
-    map.setMaxBounds(bounds)
-    map.setMinZoom(13)
-    map.setMaxZoom(18)
-  }, [map])
-
   return (
     <MapContainer
-      whenCreated={setMap}
       center={[41.2135, -8.1648]}
       zoom={14}
       className="h-[600px] w-full rounded-md"
@@ -103,8 +109,13 @@ export default function MapOcorrencia({ onLocationChange }: Props) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
+      {/* GeoJSON da freguesia */}
       <GeoJSON data={constanceGeo} style={{ color: "blue", weight: 2 }} />
 
+      {/* Ajuste automático do mapa */}
+      <MapSetup />
+
+      {/* Clique do usuário */}
       <ClickHandler onLocationChange={onLocationChange} />
     </MapContainer>
   )

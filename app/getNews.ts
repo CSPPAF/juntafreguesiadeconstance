@@ -1,17 +1,15 @@
 import { cache } from 'react'
 import { sanityClient } from '../sanityClient'
+import { PortableTextBlock } from '@portabletext/types'
 
 export type SanityNews = {
   title: string
   slug: string
   date: string
+  order?: number
   summary?: string
-  content?: any[]
-  image?: {
-    asset: {
-      _ref: string
-    }
-  }
+  content?: PortableTextBlock[]
+  image?: { asset: { _ref: string } }
 }
 
 export const getNews = cache(async (): Promise<SanityNews[]> => {

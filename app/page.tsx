@@ -13,6 +13,7 @@ import FormularioOcorrencia from '@/components/FormularioOcorrencia'
 import Calendar from '@/components/Calendar'
 import EventFilter from '@/components/EventFilter'
 import PortableTextRenderer from '@/lib/PortableTextRenderer'
+import { MenuItem } from '@/components/MenuDesktopTypes'
 
 import { getMenu } from './getMenu'
 import { getSections } from './getSections'
@@ -21,10 +22,25 @@ import { getNews, SanityNews } from './getNews'
 import { getEvents, SanityEvent } from './getEvents'
 import { urlFor } from './imageUrl'
 
+import { SanityHeader } from './getHeader'
+import { SanityMenuItem } from './getMenu'
+import { SanitySection } from './getSections'
+
+type Photographer = {
+  photo?: {
+    asset: {
+      _ref: string
+    }
+  }
+  name?: string
+  role?: string
+  description?: string
+}
+
 export default function HomePage() {
-  const [header, setHeader] = useState<any>(null)
-  const [menu, setMenu] = useState<any[]>([])
-  const [sections, setSections] = useState<any[]>([])
+  const [header, setHeader] = useState<SanityHeader | null>(null)
+  const [menu, setMenu] = useState<SanityMenuItem[]>([])
+  const [sections, setSections] = useState<SanitySection[]>([])
   const [news, setNews] = useState<SanityNews[]>([])
   const [events, setEvents] = useState<SanityEvent[]>([])
   const [activeSection, setActiveSection] = useState<string>('')
@@ -108,13 +124,32 @@ export default function HomePage() {
     .filter(e => new Date(e.date) >= today)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
+  const transformedMenu: MenuItem[] = menu.map((item): MenuItem => ({
+	  title: item.label, // sempre existe
+	  slug: item.href || `#${item.label.replace(/\s+/g, '-').toLowerCase()}`, // gera um fallback seguro
+	  label: item.label,
+	  href: item.href,
+	  children: item.children?.map((child): MenuItem => ({
+		title: child.label,
+		slug: child.href || `#${child.label.replace(/\s+/g, '-').toLowerCase()}`,
+		label: child.label,
+		href: child.href,
+		children: child.children?.map(grandchild => ({
+		  title: grandchild.label,
+		  slug: grandchild.href || `#${grandchild.label.replace(/\s+/g, '-').toLowerCase()}`,
+		  label: grandchild.label,
+		  href: grandchild.href,
+		})),
+	  })),
+  }))
+
   return (
     <main id="top" className="min-h-screen scroll-smooth">
       <Header header={header} />
 
       <div className="sticky top-0 z-50 bg-white">
-        <MenuDesktop menu={menu} className="hidden lg:block" />
-        <MenuMobile menu={menu} className="block lg:hidden" />
+        <MenuDesktop menu={transformedMenu} className="hidden lg:block" />
+		<MenuMobile menu={transformedMenu} className="block lg:hidden" />
       </div>
 
       {/* ---------- SECTIONS ---------- */}
@@ -149,7 +184,7 @@ export default function HomePage() {
 
               {hasImage && (
                 <Image
-                  src={urlFor(section.image)}
+                  src={urlFor(section.image!)}
                   alt={section.title}
                   width={220}
                   height={280}
@@ -159,9 +194,9 @@ export default function HomePage() {
             </div>
 
             {/* Fotografias (Executivo) */}
-            {section.photographers?.length > 0 && (
+            {(section.photographers?.length ?? 0) > 0 && (
               <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-                {section.photographers.map((p, idx) => (
+                {section.photographers?.map((p: Photographer, idx) => (
                   <div
                     key={idx}
                     className="flex flex-col items-center text-center transition-transform duration-300 hover:scale-105"
@@ -196,9 +231,11 @@ export default function HomePage() {
               </div>
             )}
 
-            {section.gallery?.length > 0 && (
+            {(section.gallery?.length ?? 0) > 0 && (
               <div className="mt-16">
-                <GallerySlider images={section.gallery} />
+                <GallerySlider
+				  images={section.gallery!.map(img => img.asset)}
+				/>
               </div>
             )}
 

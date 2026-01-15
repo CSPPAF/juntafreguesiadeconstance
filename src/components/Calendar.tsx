@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SanityEvent } from '../getEvents'
+import { SanityEvent } from '../../app/getEvents'
 import ModalEvent from './ModalEvent'
 
 interface CalendarProps {

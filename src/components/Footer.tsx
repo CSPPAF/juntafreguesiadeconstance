@@ -5,10 +5,10 @@ import FooterContent from './FooterContent'
 import Modal from './Modal'
 import FormularioContato from './FormularioContato'
 import ContactosContent from './ContactosContent'
-import { getFooter } from '../../app/getFooter'
+import { getFooter, SanityFooter } from '../../app/getFooter'
 
 export default function Footer() {
-  const [footer, setFooter] = useState<any>(null)
+  const [footer, setFooter] = useState<SanityFooter | null>(null)
   const [mostrarContactos, setMostrarContactos] = useState(false)
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
 
@@ -25,7 +25,6 @@ export default function Footer() {
         onOpenContact={() => setMostrarContactos(true)}
       />
 
-      {/* MODAL 1 */}
       {mostrarContactos && (
         <Modal
           title="Contactos"
@@ -43,7 +42,6 @@ export default function Footer() {
         </Modal>
       )}
 
-      {/* MODAL 2 — EM CIMA */}
       {mostrarFormulario && (
         <Modal
           title="Pedido de Informação"

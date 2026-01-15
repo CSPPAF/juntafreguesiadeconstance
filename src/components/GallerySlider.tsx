@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { urlFor } from '../../app/imageUrl'
 
 type Props = {
-  images: any[]
+  images: { _ref: string }[]
 }
 
 export default function GallerySlider({ images }: Props) {
@@ -31,7 +31,6 @@ export default function GallerySlider({ images }: Props) {
         />
       </div>
 
-      {/* Setas */}
       <button
         onClick={prev}
         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-full hover:bg-black/70"

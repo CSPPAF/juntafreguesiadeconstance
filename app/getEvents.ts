@@ -1,17 +1,14 @@
 import { sanityClient } from '../sanityClient'
+import { PortableTextBlock } from '@portabletext/types'
 
 export type SanityEvent = {
   title: string
   slug: string
   date: string
   endDate?: string
-  type: string          // ← adicionar
-  description?: any[]
-  image?: {
-    asset: {
-      url: string
-    }
-  }
+  type: string
+  description?: PortableTextBlock[]
+  image?: { asset: { url: string } }
 }
 
 export async function getEvents(): Promise<SanityEvent[]> {
@@ -20,7 +17,7 @@ export async function getEvents(): Promise<SanityEvent[]> {
     "slug": slug.current,
     date,
     endDate,
-    type,               // ← adicionar
+    type,
     description,
     image {
       asset->{
@@ -31,4 +28,3 @@ export async function getEvents(): Promise<SanityEvent[]> {
 
   return sanityClient.fetch(query)
 }
-

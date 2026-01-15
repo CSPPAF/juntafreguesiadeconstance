@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MenuItem } from './MenuDesktop'
+import { MenuItem } from './MenuDesktopTypes'
 
 type Props = {
   menu: MenuItem[]
@@ -15,7 +15,11 @@ export default function MenuMobile({ menu, className = '' }: Props) {
   const toggleSubmenu = (key: string) => {
     setOpenSubmenus(prev => {
       const next = new Set(prev)
-      next.has(key) ? next.delete(key) : next.add(key)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
       return next
     })
   }
@@ -30,7 +34,6 @@ export default function MenuMobile({ menu, className = '' }: Props) {
     if (!href) return
 
     if (href.startsWith('#')) {
-      // ✅ atualiza o hash → SPA funciona
       window.location.hash = href
     } else {
       window.location.href = href
@@ -80,7 +83,6 @@ export default function MenuMobile({ menu, className = '' }: Props) {
 
   return (
     <div className={className}>
-      {/* Botão hambúrguer */}
       <button
         onClick={() => setOpen(true)}
         className="fixed top-4 right-4 z-[9999] bg-blue-600 text-white py-1 px-3 rounded-md text-lg shadow-md hover:bg-blue-700 transition"
@@ -90,7 +92,6 @@ export default function MenuMobile({ menu, className = '' }: Props) {
         ☰
       </button>
 
-      {/* Overlay */}
       {open && (
         <div
           className="fixed inset-0 bg-black/50 z-40"
@@ -99,7 +100,6 @@ export default function MenuMobile({ menu, className = '' }: Props) {
         />
       )}
 
-      {/* Menu lateral */}
       <nav
         className={`fixed top-0 right-0 h-full w-72 bg-white z-50 transform transition-transform duration-300
         ${open ? 'translate-x-0' : 'translate-x-full'}`}

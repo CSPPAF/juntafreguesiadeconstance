@@ -9,13 +9,13 @@ export type SanityMenuItem = {
 
 export const getMenu = cache(async (): Promise<SanityMenuItem[]> => {
   const query = `*[_type == "menu"][0]{
-    items[]{
+    items[] {
       label,
       href,
-      children[]{
+      children[] {
         label,
         href,
-        children[]{
+        children[] {
           label,
           href
         }

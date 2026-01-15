@@ -1,12 +1,14 @@
 import { cache } from 'react'
 import { sanityClient } from '../sanityClient'
+import { PortableTextBlock } from '@portabletext/types'
 
 export type SanitySection = {
   title: string
   slug: string
-  content?: any[]
+  content?: PortableTextBlock[]
   image?: { asset: { _ref: string } }
   gallery?: { asset: { _ref: string } }[]
+  showFormularioOcorrencias?: boolean
   photographers?: {
     photo?: { asset: { _ref: string } }
     name?: string
@@ -22,8 +24,8 @@ export const getSections = cache(async (): Promise<SanitySection[]> => {
     content,
     image,
     gallery,
-	showFormularioOcorrencias,
-    photographers[]{
+    showFormularioOcorrencias,
+    photographers[] {
       photo,
       name,
       role,

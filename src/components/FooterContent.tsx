@@ -2,14 +2,14 @@
 
 import Image from 'next/image'
 import { urlFor } from '../../app/imageUrl'
+import { SanityFooter } from '../../app/getFooter'
 
-export default function FooterContent({
-  footer,
-  onOpenContact,
-}: {
-  footer: any
+type Props = {
+  footer: SanityFooter
   onOpenContact: () => void
-}) {
+}
+
+export default function FooterContent({ footer, onOpenContact }: Props) {
   return (
     <footer className="bg-gray-900 text-white px-6 py-10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-10">
@@ -40,7 +40,7 @@ export default function FooterContent({
           </p>
         </div>
 
-        {footer.columns?.map((col: any) => (
+        {footer.columns?.map(col => (
           <div
             key={col.title}
             className="flex flex-col sm:items-end sm:text-right"
@@ -50,10 +50,9 @@ export default function FooterContent({
             </div>
 
             <ul className="space-y-2 text-sm mt-4">
-              {col.links?.map((link: any) => (
+              {col.links?.map(link => (
                 <li key={link.label}>
-                  {link.action === 'modal' &&
-                  link.value === 'Contactos' ? (
+                  {link.action === 'modal' && link.value === 'Contactos' ? (
                     <button
                       onClick={onOpenContact}
                       className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1"
@@ -61,7 +60,10 @@ export default function FooterContent({
                       {link.label}
                     </button>
                   ) : (
-                    <a href={link.value} className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1">
+                    <a
+                      href={link.value}
+                      className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1"
+                    >
                       {link.label}
                     </a>
                   )}

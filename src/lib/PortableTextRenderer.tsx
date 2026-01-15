@@ -1,6 +1,12 @@
-import { PortableText } from '@portabletext/react'
+import { PortableText, PortableTextBlock } from '@portabletext/react'
 
-export default function PortableTextRenderer({ value }: { value: any }) {
+type Props = {
+  value: PortableTextBlock[] | null | undefined
+}
+
+export default function PortableTextRenderer({ value }: Props) {
+  if (!value) return null
+
   return (
     <PortableText
       value={value}

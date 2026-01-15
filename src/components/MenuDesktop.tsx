@@ -12,7 +12,6 @@ export default function MenuDesktop({ menu, className = '' }: Props) {
     if (!href) return
 
     if (href.startsWith('#')) {
-      // ✅ ISTO É O MAIS IMPORTANTE
       window.location.hash = href
     } else {
       window.location.href = href
@@ -24,7 +23,6 @@ export default function MenuDesktop({ menu, className = '' }: Props) {
       <ul className="flex justify-center gap-8 px-6 py-3 text-gray-800 font-medium">
         {menu.map(item => (
           <li key={item.label} className="relative group/main">
-            {/* ITEM PRINCIPAL */}
             <span
               onClick={() => handleClick(item.href)}
               className="cursor-pointer hover:text-blue-600"
@@ -32,7 +30,6 @@ export default function MenuDesktop({ menu, className = '' }: Props) {
               {item.label}
             </span>
 
-            {/* 1º NÍVEL */}
             {item.children && (
               <ul
                 className="absolute left-0 top-full mt-2 w-64 bg-white border rounded-md shadow-lg py-2
@@ -50,7 +47,6 @@ export default function MenuDesktop({ menu, className = '' }: Props) {
                       {sub.children && <span>▸</span>}
                     </span>
 
-                    {/* 2º NÍVEL */}
                     {sub.children && (
                       <ul
                         className="absolute top-0 left-full w-64 bg-white border rounded-md shadow-lg py-2
