@@ -390,6 +390,18 @@ export default function HomePage() {
           <p className="text-sm text-gray-500 mb-6">
             {new Date(item.date).toLocaleDateString('pt-PT')}
           </p>
+		  {/* 🔹 Mostrar a imagem da notícia */}
+		  {item.image && (
+			  <div className="w-1/2 mx-auto mb-6">
+				<Image
+				  src={urlFor(item.image)}
+				  alt={item.title}
+				  width={400}           // metade do tamanho anterior
+				  height={200}          // metade do tamanho anterior
+				  className="w-full rounded-md object-cover"
+				/>
+			  </div>
+		  )}
           <PortableTextRenderer value={item.content} />
         </section>
       ))}
