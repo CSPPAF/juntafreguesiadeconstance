@@ -47,14 +47,24 @@ export default function Header({ header }: HeaderProps) {
       <div className="relative z-10 h-full flex items-center px-6 max-w-6xl mx-auto">
         <div className="flex items-center gap-4 flex-wrap md:flex-nowrap">
           {header.logo && (
-            <Image
-              src={urlFor(header.logo)}
-              alt="Logotipo"
-              width={96}
-              height={96}
-              className="object-contain"
-            />
-          )}
+		    <span
+			  onClick={() => (window.location.hash = '#inicio')}
+			  className="
+			    relative cursor-pointer
+			    w-[150px] h-[150px]
+			    md:w-[200px] md:h-[200px]
+			  "
+			  aria-label="Ir para o início"
+		    >
+			<Image
+			  src={urlFor(header.logo)}
+			  alt="Logotipo"
+			  fill
+			  className="object-contain"
+			  sizes="(max-width: 768px) 150px, 200px"
+			/>
+		    </span>
+		  )}
 
           <h1 className="text-white text-2xl md:text-4xl font-bold text-center md:text-left">
             {header.title}
