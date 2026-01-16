@@ -55,7 +55,7 @@ export default function MenuMobile({ menu, className = '' }: Props) {
                   className="w-full flex justify-between items-center text-gray-800 font-medium hover:text-blue-600 transition"
                   aria-expanded={isOpen}
                 >
-                  <span>{item.label || item.title}</span>
+                  <span>{item.label && item.label.trim() !== "" ? item.label : item.title}</span>
                   <span className="text-sm">{isOpen ? '▾' : '▸'}</span>
                 </button>
 
@@ -72,7 +72,7 @@ export default function MenuMobile({ menu, className = '' }: Props) {
                 onClick={() => handleClick(item.href)}
                 className="block text-sm text-gray-600 hover:text-blue-600 transition cursor-pointer"
               >
-                {item.label || item.title}
+                {item.label && item.label.trim() !== "" ? item.label : item.title}
               </span>
             )}
           </li>
