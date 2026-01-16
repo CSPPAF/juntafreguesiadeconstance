@@ -78,7 +78,7 @@ export default function FooterContent({ footer, onOpenContact }: Props) {
                     </button>
                   ) : (
                     <button
-					  onClick={() => handleFooterLink(link.value)}
+					  onClick={() => link.value && handleFooterLink(link.value)}
 					  className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1 text-left"
 					>
 					  {link.label}
