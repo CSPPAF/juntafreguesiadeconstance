@@ -7,7 +7,12 @@ import FormularioContato from './FormularioContato'
 import ContactosContent from './ContactosContent'
 import { getFooter, SanityFooter } from '../../app/getFooter'
 
-export default function Footer() {
+type Props = {
+  eventosSlug: string
+  onGoToSection: (slug: string) => void
+}
+
+export default function Footer({ eventosSlug, onGoToSection }: Props) {
   const [footer, setFooter] = useState<SanityFooter | null>(null)
   const [mostrarContactos, setMostrarContactos] = useState(false)
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
@@ -23,6 +28,8 @@ export default function Footer() {
       <FooterContent
         footer={footer}
         onOpenContact={() => setMostrarContactos(true)}
+        eventosSlug={eventosSlug}
+        onGoToSection={onGoToSection}
       />
 
       {mostrarContactos && (

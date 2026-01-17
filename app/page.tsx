@@ -44,6 +44,7 @@ export default function HomePage() {
   const [news, setNews] = useState<SanityNews[]>([])
   const [events, setEvents] = useState<SanityEvent[]>([])
   const [activeSection, setActiveSection] = useState<string>('')
+  const [scrollFromFooter, setScrollFromFooter] = useState(false) // 🔑 novo flag
 
   const [eventType, setEventType] = useState<string | null>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -94,10 +95,31 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  /* 🔹 Scroll dinâmico do footer */
+  useEffect(() => {
+    if (!scrollFromFooter) return
+    if (!activeSection) return
+
+    const el = document.getElementById(activeSection)
+    if (!el) return
+
+    // 🔹 Scroll suave apenas quando clicado no footer
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setScrollFromFooter(false) // 🔑 reset
+    })
+  }, [activeSection, scrollFromFooter])
+
   if (!header || sections.length === 0) return null
 
   // 🔑 HOME = primeira section do CMS
   const homeSectionId = sections[0].slug.replace(/^#/, '')
+
+  // 🔑 Section Eventos (dinâmico)
+  const eventosSection = sections.find(s =>
+    s.title.toLowerCase().includes('evento')
+  )
+  const eventosSectionId = eventosSection ? eventosSection.slug.replace(/^#/, '') : ''
 
   // 🔑 Ver se é uma notícia
   const isNewsOpen = news.some(n => n.slug === activeSection)
@@ -108,10 +130,10 @@ export default function HomePage() {
   const canGoPrev = newsIndex > 0
   const canGoNext = newsIndex + NEWS_PER_PAGE < news.length
 
-  // 🔹 Filtrar eventos por tipo	  
+  // 🔹 Filtrar eventos por tipo
   const filteredEvents = eventType
-	? events.filter(e => e.type?.toLowerCase() === eventType.toLowerCase())
-	: events
+    ? events.filter(e => e.type?.toLowerCase() === eventType.toLowerCase())
+    : events
 
   // 🔹 Evento em destaque (mais próximo no futuro)
   const today = new Date()
@@ -125,22 +147,22 @@ export default function HomePage() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   const transformedMenu: MenuItem[] = menu.map((item): MenuItem => ({
-	  title: item.label, // sempre existe
-	  slug: item.href || `#${item.label.replace(/\s+/g, '-').toLowerCase()}`, // gera um fallback seguro
-	  label: item.label,
-	  href: item.href,
-	  children: item.children?.map((child): MenuItem => ({
-		title: child.label,
-		slug: child.href || `#${child.label.replace(/\s+/g, '-').toLowerCase()}`,
-		label: child.label,
-		href: child.href,
-		children: child.children?.map(grandchild => ({
-		  title: grandchild.label,
-		  slug: grandchild.href || `#${grandchild.label.replace(/\s+/g, '-').toLowerCase()}`,
-		  label: grandchild.label,
-		  href: grandchild.href,
-		})),
-	  })),
+    title: item.label, // sempre existe
+    slug: item.href || `#${item.label.replace(/\s+/g, '-').toLowerCase()}`, // fallback
+    label: item.label,
+    href: item.href,
+    children: item.children?.map((child): MenuItem => ({
+      title: child.label,
+      slug: child.href || `#${child.label.replace(/\s+/g, '-').toLowerCase()}`,
+      label: child.label,
+      href: child.href,
+      children: child.children?.map(grandchild => ({
+        title: grandchild.label,
+        slug: grandchild.href || `#${grandchild.label.replace(/\s+/g, '-').toLowerCase()}`,
+        label: grandchild.label,
+        href: grandchild.href,
+      })),
+    })),
   }))
 
   return (
@@ -149,7 +171,7 @@ export default function HomePage() {
 
       <div className="sticky top-0 z-50 bg-white">
         <MenuDesktop menu={transformedMenu} className="hidden lg:block" />
-		<MenuMobile menu={transformedMenu} className="block lg:hidden" />
+        <MenuMobile menu={transformedMenu} className="block lg:hidden" />
       </div>
 
       {/* ---------- SECTIONS ---------- */}
@@ -234,8 +256,8 @@ export default function HomePage() {
             {(section.gallery?.length ?? 0) > 0 && (
               <div className="mt-16">
                 <GallerySlider
-				  images={section.gallery!.map(img => img.asset)}
-				/>
+                  images={section.gallery!.map(img => img.asset)}
+                />
               </div>
             )}
 
@@ -249,67 +271,70 @@ export default function HomePage() {
       })}
 
       {/* ---------- EVENTOS ---------- */}
-      {activeSection === 'eventos' && (
-        <section className="max-w-6xl mx-auto px-6 py-16">
-          <h2 className="mb-12 text-3xl font-bold text-blue-600 text-center">
-            Eventos na Freguesia
-          </h2>
+      <section
+        id={eventosSectionId}
+        className={`max-w-6xl mx-auto px-6 py-16 ${
+          activeSection === eventosSectionId ? 'block' : 'hidden'
+        }`}
+      >
+        <h2 className="mb-12 text-3xl font-bold text-blue-600 text-center">
+          Eventos na Freguesia
+        </h2>
 
-          {/* 🔹 Evento em destaque */}
-          {nextEvent && (
-            <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded">
-              <h3 className="text-xl font-semibold text-blue-700 mb-2">
-                Próximo Evento: {nextEvent.title}
-              </h3>
-              <p className="text-sm text-gray-700 mb-2">
-                {new Date(nextEvent.date).toLocaleDateString('pt-PT', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </p>
-              {nextEvent.image && (
-                <Image
-                  src={nextEvent.image.asset.url}
-                  alt={nextEvent.title}
-                  width={400}
-                  height={200}
-                  className="object-cover w-full rounded mb-2"
-                />
-              )}
-            </div>
-          )}
+        {/* 🔹 Evento em destaque */}
+        {nextEvent && (
+          <div className="mb-8 p-6 bg-blue-50 border-l-4 border-blue-600 rounded">
+            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+              Próximo Evento: {nextEvent.title}
+            </h3>
+            <p className="text-sm text-gray-700 mb-2">
+              {new Date(nextEvent.date).toLocaleDateString('pt-PT', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </p>
+            {nextEvent.image && (
+              <Image
+                src={nextEvent.image.asset.url}
+                alt={nextEvent.title}
+                width={400}
+                height={200}
+                className="object-cover w-full rounded mb-2"
+              />
+            )}
+          </div>
+        )}
 
-          {/* 🔹 Filtro tipo de evento */}
-          <EventFilter value={eventType} onChange={setEventType} />
+        {/* 🔹 Filtro tipo de evento */}
+        <EventFilter value={eventType} onChange={setEventType} />
 
-          {/* 🔹 Calendário */}
-          <Calendar events={filteredEvents} />
+        {/* 🔹 Calendário */}
+        <Calendar events={filteredEvents} />
 
-          {/* 🔹 Lista Próximos eventos */}
-          {upcomingEvents.length > 0 && (
-            <div className="mt-12">
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">
-                Próximos Eventos
-              </h3>
-              <ul className="space-y-2">
-                {upcomingEvents.map(e => (
-                  <li key={e.slug} className="p-3 border rounded hover:bg-blue-50 transition">
-                    <span className="font-medium text-gray-800">{e.title}</span> —{' '}
-                    <span className="text-gray-600">
-                      {new Date(e.date).toLocaleDateString('pt-PT', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
-      )}
+        {/* 🔹 Lista Próximos eventos */}
+        {upcomingEvents.length > 0 && (
+          <div className="mt-12">
+            <h3 className="text-xl font-semibold text-blue-600 mb-4">
+              Próximos Eventos
+            </h3>
+            <ul className="space-y-2">
+              {upcomingEvents.map(e => (
+                <li key={e.slug} className="p-3 border rounded hover:bg-blue-50 transition">
+                  <span className="font-medium text-gray-800">{e.title}</span> —{' '}
+                  <span className="text-gray-600">
+                    {new Date(e.date).toLocaleDateString('pt-PT', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
 
       {/* ---------- NOTÍCIAS (só na Home) ---------- */}
       {isHome && news.length > 0 && (
@@ -390,18 +415,17 @@ export default function HomePage() {
           <p className="text-sm text-gray-500 mb-6">
             {new Date(item.date).toLocaleDateString('pt-PT')}
           </p>
-		  {/* 🔹 Mostrar a imagem da notícia */}
-		  {item.image && (
-			  <div className="w-1/2 mx-auto mb-6">
-				<Image
-				  src={urlFor(item.image)}
-				  alt={item.title}
-				  width={400}           // metade do tamanho anterior
-				  height={200}          // metade do tamanho anterior
-				  className="w-full rounded-md object-cover"
-				/>
-			  </div>
-		  )}
+          {item.image && (
+            <div className="w-1/2 mx-auto mb-6">
+              <Image
+                src={urlFor(item.image)}
+                alt={item.title}
+                width={400}
+                height={200}
+                className="w-full rounded-md object-cover"
+              />
+            </div>
+          )}
           <PortableTextRenderer value={item.content} />
         </section>
       ))}
@@ -415,7 +439,13 @@ export default function HomePage() {
         </button>
       )}
 
-      <Footer />
+      <Footer 
+        eventosSlug={eventosSectionId} 
+        onGoToSection={(slug: string) => {
+          setActiveSection(slug)
+          setScrollFromFooter(true) // 🔑 dispara scroll apenas ao clicar no footer
+        }} 
+      />
     </main>
   )
 }

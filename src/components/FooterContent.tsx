@@ -7,26 +7,11 @@ import { SanityFooter } from '../../app/getFooter'
 type Props = {
   footer: SanityFooter
   onOpenContact: () => void
+  eventosSlug: string
+  onGoToSection: (slug: string) => void
 }
 
-export default function FooterContent({ footer, onOpenContact }: Props) {
-  const handleFooterLink = (href: string) => {
-	  if (href.startsWith('#')) {
-		// Atualiza o hash
-		window.location.hash = href
-
-		// Aguarda um tick para garantir que a section está ativa
-		setTimeout(() => {
-		  const id = href.replace('#', '')
-		  const el = document.getElementById(id)
-		  if (el) {
-			el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-		  }
-		}, 50)
-	  } else {
-		window.location.href = href
-	  }
-  }
+export default function FooterContent({ footer, onOpenContact, eventosSlug, onGoToSection }: Props) {
   return (
     <footer className="bg-gray-900 text-white px-6 py-10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-10">
@@ -77,12 +62,15 @@ export default function FooterContent({ footer, onOpenContact }: Props) {
                       {link.label}
                     </button>
                   ) : (
-                    <button
-					  onClick={() => link.value && handleFooterLink(link.value)}
-					  className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1 text-left"
+                    <a
+					  href={`#${eventosSlug}`} // href correto do CMS
+					  onClick={() => {
+						onGoToSection(eventosSlug) // atualiza React state
+					  }}
+					  className="inline-block text-gray-300 transition hover:text-white hover:translate-x-1"
 					>
 					  {link.label}
-					</button>
+					</a>
                   )}
                 </li>
               ))}
