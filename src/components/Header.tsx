@@ -45,7 +45,7 @@ export default function Header({ header }: HeaderProps) {
       <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative z-10 h-full flex items-center px-6 max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 flex-wrap md:flex-nowrap">
+        <div className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-4">
           {header.logo && (
 			  <span
 				onClick={() => (window.location.hash = '#inicio')}
