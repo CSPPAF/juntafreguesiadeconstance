@@ -26,6 +26,7 @@ export type SanitySection = {
   }[]
   twoColumnPDFs?: {
     title: string
+	year: number 
     file: { asset: { url: string } }
   }[]
 }
