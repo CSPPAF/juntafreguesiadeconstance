@@ -70,6 +70,40 @@ export default defineType({
 	  title: 'Mostrar formulário de ocorrências',
 	  type: 'boolean',
 	  initialValue: false,
+	}),
+	
+	defineField({
+	  name: 'editais',
+	  title: 'Editais (PDF)',
+	  type: 'array',
+	  of: [
+		{
+		  type: 'object',
+		  fields: [
+			{
+			  name: 'title',
+			  title: 'Título',
+			  type: 'string',
+			  validation: Rule => Rule.required(),
+			},
+			{
+			  name: 'date',
+			  title: 'Data',
+			  type: 'date',
+			},
+			{
+			  name: 'file',
+			  title: 'Ficheiro PDF',
+			  type: 'file',
+			  options: {
+				accept: 'application/pdf',
+			  },
+			  validation: Rule => Rule.required(),
+			},
+		  ],
+		},
+	  ],
 	})
   ],
 })
+
