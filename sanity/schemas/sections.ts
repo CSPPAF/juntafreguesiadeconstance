@@ -120,19 +120,22 @@ export default defineType({
 			  validation: Rule => Rule.required(),
 			},
 			{
-			  name: 'file',
-			  title: 'Ficheiro PDF',
-			  type: 'file',
-			  options: {
-				accept: 'application/pdf',
-			  },
-			  validation: Rule => Rule.required(),
-			},
-			{
 			  name: 'year',
 			  title: 'Ano do PDF',
 			  type: 'number',
 			  validation: Rule => Rule.required(),
+			},
+			{
+			  name: 'files', // ⚠️ aqui tem de ser "files" (plural)
+			  title: 'Ficheiros PDF',
+			  type: 'array',
+			  of: [
+				{
+				  type: 'file',
+				  options: { accept: 'application/pdf' },
+				  validation: Rule => Rule.required(),
+				},
+			  ],
 			},
 		  ],
 		},
