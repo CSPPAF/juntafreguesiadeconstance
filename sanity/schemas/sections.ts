@@ -103,7 +103,40 @@ export default defineType({
 		  ],
 		},
 	  ],
+	}),
+	
+	defineField({
+	  name: 'twoColumnPDFs',
+	  title: 'PDFs em Duas Colunas',
+	  type: 'array',
+	  of: [
+		{
+		  type: 'object',
+		  fields: [
+			{
+			  name: 'title',
+			  title: 'Título do PDF',
+			  type: 'string',
+			  validation: Rule => Rule.required(),
+			},
+			{
+			  name: 'file',
+			  title: 'Ficheiro PDF',
+			  type: 'file',
+			  options: {
+				accept: 'application/pdf',
+			  },
+			  validation: Rule => Rule.required(),
+			},
+			{
+			  name: 'year',
+			  title: 'Ano do PDF',
+			  type: 'number',
+			  validation: Rule => Rule.required(),
+			},
+		  ],
+		},
+	  ],
 	})
   ],
 })
-
