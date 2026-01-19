@@ -37,6 +37,18 @@ type Photographer = {
   description?: string
 }
 
+type Edital = {
+  title: string
+  date?: string
+  file: {
+    asset: {
+      url: string
+    }
+  }
+}
+
+type EditaisPorAno = Record<string, Edital[]>
+
 export default function HomePage() {
   const [header, setHeader] = useState<SanityHeader | null>(null)
   const [menu, setMenu] = useState<SanityMenuItem[]>([])
@@ -256,70 +268,68 @@ export default function HomePage() {
 
             {section.editais && section.editais.length > 0 && (
 			  <div className="space-y-6">
-				{Object.entries(
-				  section.editais.reduce((groups: Record<string, any[]>, edital) => {
-					const year = edital.date
-					  ? new Date(edital.date).getFullYear().toString()
-					  : 'Sem Data'
-					if (!groups[year]) groups[year] = []
-					groups[year].push(edital)
-					return groups
-				  }, {})
-				)
-				  .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
-				  .map(([year, editais]) => {
-					const isOpen = openYear === year
-
-					return (
-					  <div key={year} className="border rounded-lg overflow-hidden">
-						{/* HEADER DO ANO */}
-						<button
-						  onClick={() => setOpenYear(openYear === year ? null : year)}
-						  className="w-full flex items-center justify-between text-left font-semibold text-blue-600 text-lg py-3 hover:text-blue-800 transition"
-						>
-						  <span>{year}</span>
-
-						  {openYear === year ? (
-							<Minus className="w-5 h-5" />
-						  ) : (
-							<Plus className="w-5 h-5" />
-						  )}
-						</button>
-
-						{/* CONTEÚDO (EDITAIS) */}
-						{isOpen && (
-						  <div className="divide-y bg-white">
-							{editais.map((edital, idx) => (
-							  <div
-								key={idx}
-								className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-5 py-4"
-							  >
-								<div>
-								  <p className="font-medium text-gray-800">
-									{edital.title}
-								  </p>
-								  {edital.date && (
-									<p className="text-sm text-gray-500">
-									  {new Date(edital.date).toLocaleDateString('pt-PT')}
-									</p>
-								  )}
-								</div>
-
-								<a
-								  href={edital.file.asset.url}
-								  target="_blank"
-								  rel="noopener noreferrer"
-								  className="inline-flex justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-								>
-								  Abrir PDF
-								</a>
-							  </div>
-							))}
-						  </div>
-						)}
-					  </div>
-					)
-				  })}
+			    {(() => {
+			      // Agrupa editais por ano
+			      const editaisPorAno: EditaisPorAno = {}
+			
+			      section.editais.forEach((edital: Edital) => {
+			        const year = edital.date
+			          ? new Date(edital.date).getFullYear().toString()
+			          : 'Sem Data'
+			
+			        if (!editaisPorAno[year]) editaisPorAno[year] = []
+			        editaisPorAno[year].push(edital)
+			      })
+			
+			      return Object.entries(editaisPorAno)
+			        .sort(([a], [b]) => parseInt(b) - parseInt(a)) // anos decrescente
+			        .map(([year, editais]) => {
+			          const isOpen = openYear === year
+			
+			          return (
+			            <div key={year} className="border rounded-lg overflow-hidden">
+			              {/* HEADER DO ANO */}
+			              <button
+			                onClick={() => setOpenYear(openYear === year ? null : year)}
+			                className="w-full flex items-center justify-between text-left font-semibold text-blue-600 text-lg py-3 hover:text-blue-800 transition"
+			              >
+			                <span>{year}</span>
+			                {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+			              </button>
+			
+			              {/* CONTEÚDO (EDITAIS) */}
+			              {isOpen && (
+			                <div className="divide-y bg-white">
+			                  {editais.map((edital, idx) => (
+			                    <div
+			                      key={idx}
+			                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-5 py-4"
+			                    >
+			                      <div>
+			                        <p className="font-medium text-gray-800">{edital.title}</p>
+			                        {edital.date && (
+			                          <p className="text-sm text-gray-500">
+			                            {new Date(edital.date).toLocaleDateString('pt-PT')}
+			                          </p>
+			                        )}
+			                      </div>
+			
+			                      <a
+			                        href={edital.file.asset.url}
+			                        target="_blank"
+			                        rel="noopener noreferrer"
+			                        className="inline-flex justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+			                      >
+			                        Abrir PDF
+			                      </a>
+			                    </div>
+			                  ))}
+			                </div>
+			              )}
+			            </div>
+			          )
+			        })
+			    })()}
 			  </div>
 			)}
 
