@@ -26,44 +26,50 @@ export type SanitySection = {
   }[]
   twoColumnPDFs?: {
     title: string
-	year: number 
-    file: { asset: { url: string } }
+    year: number
+    files: {
+      asset: {
+        url: string
+        originalFilename: string
+      }
+    }[]
   }[]
 }
 
 export const getSections = cache(async (): Promise<SanitySection[]> => {
   const query = `*[_type == "section"] | order(order asc) {
-	  title,
-	  "slug": slug.current,
-	  content,
-	  image,
-	  gallery,
-	  showFormularioOcorrencias,
-	  photographers[] {
-		photo,
-		name,
-		role,
-		description
-	  },
-	  editais[] {
-		title,
-		date,
-		file {
-		  asset->{
-			url
-		  }
-		}
-	  },
-	  twoColumnPDFs[] {
-	    title,
-	    year,
-	    file {
-		  asset->{
-		    url
-		  }
-	   }
-	  }
-	}`
+  title,
+  "slug": slug.current,
+  content,
+  image,
+  gallery,
+  showFormularioOcorrencias,
+  photographers[] {
+    photo,
+    name,
+    role,
+    description
+  },
+  editais[] {
+    title,
+    date,
+    file {
+      asset->{
+        url
+      }
+    }
+  },
+  twoColumnPDFs[] {
+    title,
+    year,
+    files[] {
+      asset->{
+        url,
+        originalFilename
+      }
+    }
+  }
+}`
 
   return sanityClient.fetch(query)
 })
