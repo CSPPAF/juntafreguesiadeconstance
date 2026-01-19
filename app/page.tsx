@@ -338,6 +338,7 @@ export default function HomePage() {
 				{(() => {
 				  // Agrupa PDFs por ano
 				  const pdfsPorAno: Record<string, typeof section.twoColumnPDFs> = {}
+
 				  section.twoColumnPDFs.forEach(pdf => {
 					const year = pdf.year.toString()
 					if (!pdfsPorAno[year]) pdfsPorAno[year] = []
@@ -345,7 +346,7 @@ export default function HomePage() {
 				  })
 
 				  return Object.entries(pdfsPorAno)
-					.sort(([a], [b]) => parseInt(b) - parseInt(a)) // anos decrescente
+					.sort(([a], [b]) => parseInt(b) - parseInt(a))
 					.map(([year, pdfs]) => {
 					  const isOpen = openYear === year
 
@@ -366,20 +367,34 @@ export default function HomePage() {
 
 						  {/* CONTEÚDO (PDFS) */}
 						  {isOpen && (
-							<div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x bg-white">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-white p-4">
 							  {pdfs.map((pdf, idx) => (
-								<a
+								<div
 								  key={idx}
-								  href={pdf.file.asset.url}
-								  target="_blank"
-								  rel="noopener noreferrer"
-								  className="flex flex-col justify-between p-4 hover:bg-blue-50 transition border-b sm:border-b-0 sm:border-r last:border-r-0"
+								  className="border rounded-md p-4 flex flex-col gap-3"
 								>
-								  <p className="font-medium text-gray-800">{pdf.title}</p>
-								  <span className="mt-2 text-blue-600 font-semibold">
-									Abrir PDF
-								  </span>
-								</a>
+								  <p className="font-semibold text-gray-800">
+									{pdf.title}
+								  </p>
+
+								  <div className="flex flex-col gap-2">
+									{pdf.files.map((file, fidx) => {
+									  const fileName = file.asset.originalFilename
+
+									  return (
+										<a
+										  key={fidx}
+										  href={file.asset.url}
+										  target="_blank"
+										  rel="noopener noreferrer"
+										  className="text-blue-600 hover:underline text-sm"
+										>
+										  {fileName}
+										</a>
+									  )
+									})}
+								  </div>
+								</div>
 							  ))}
 							</div>
 						  )}
