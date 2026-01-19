@@ -333,6 +333,63 @@ export default function HomePage() {
 			  </div>
 			)}
 
+			{section.twoColumnPDFs && section.twoColumnPDFs.length > 0 && (
+			  <div className="space-y-6 mt-10">
+				{(() => {
+				  // Agrupa PDFs por ano
+				  const pdfsPorAno: Record<string, typeof section.twoColumnPDFs> = {}
+				  section.twoColumnPDFs.forEach(pdf => {
+					const year = pdf.year.toString()
+					if (!pdfsPorAno[year]) pdfsPorAno[year] = []
+					pdfsPorAno[year].push(pdf)
+				  })
+
+				  return Object.entries(pdfsPorAno)
+					.sort(([a], [b]) => parseInt(b) - parseInt(a)) // anos decrescente
+					.map(([year, pdfs]) => {
+					  const isOpen = openYear === year
+
+					  return (
+						<div key={year} className="border rounded-lg overflow-hidden">
+						  {/* HEADER DO ANO */}
+						  <button
+							onClick={() => setOpenYear(openYear === year ? null : year)}
+							className="w-full flex items-center justify-between text-left font-semibold text-blue-600 text-lg py-3 hover:text-blue-800 transition"
+						  >
+							<span>{year}</span>
+							{isOpen ? (
+							  <Minus className="w-5 h-5" />
+							) : (
+							  <Plus className="w-5 h-5" />
+							)}
+						  </button>
+
+						  {/* CONTEÚDO (PDFS) */}
+						  {isOpen && (
+							<div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x bg-white">
+							  {pdfs.map((pdf, idx) => (
+								<a
+								  key={idx}
+								  href={pdf.file.asset.url}
+								  target="_blank"
+								  rel="noopener noreferrer"
+								  className="flex flex-col justify-between p-4 hover:bg-blue-50 transition border-b sm:border-b-0 sm:border-r last:border-r-0"
+								>
+								  <p className="font-medium text-gray-800">{pdf.title}</p>
+								  <span className="mt-2 text-blue-600 font-semibold">
+									Abrir PDF
+								  </span>
+								</a>
+							  ))}
+							</div>
+						  )}
+						</div>
+					  )
+					})
+				})()}
+			  </div>
+			)}
+
             {(section.gallery?.length ?? 0) > 0 && (
               <div className="mt-16">
                 <GallerySlider
