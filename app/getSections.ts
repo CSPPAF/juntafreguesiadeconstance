@@ -24,6 +24,10 @@ export type SanitySection = {
       }
     }
   }[]
+  twoColumnPDFs?: {
+    title: string
+    file: { asset: { url: string } }
+  }[]
 }
 
 export const getSections = cache(async (): Promise<SanitySection[]> => {
@@ -48,6 +52,15 @@ export const getSections = cache(async (): Promise<SanitySection[]> => {
 			url
 		  }
 		}
+	  },
+	  twoColumnPDFs[] {
+	    title,
+	    year,
+	    file {
+		  asset->{
+		    url
+		  }
+	   }
 	  }
 	}`
 
