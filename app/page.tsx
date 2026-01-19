@@ -196,7 +196,7 @@ export default function HomePage() {
             <hr className="mb-10 border-gray-300" />
 
             <div
-              className={`grid gap-10 ${
+              className={`grid gap-10 items-start md:items-center ${
                 hasImage ? 'md:grid-cols-3' : 'grid-cols-1'
               }`}
             >
@@ -210,7 +210,7 @@ export default function HomePage() {
                   alt={section.title}
                   width={220}
                   height={280}
-                  className="rounded-md shadow-md object-cover"
+                  className="rounded-md shadow-md object-cover mx-auto md:mx-0"
                 />
               )}
             </div>
