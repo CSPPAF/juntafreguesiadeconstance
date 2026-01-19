@@ -15,23 +15,41 @@ export type SanitySection = {
     role?: string
     description?: string
   }[]
+  editais?: {
+    title: string
+    date?: string
+    file: {
+      asset: {
+        url: string
+      }
+    }
+  }[]
 }
 
 export const getSections = cache(async (): Promise<SanitySection[]> => {
   const query = `*[_type == "section"] | order(order asc) {
-    title,
-    "slug": slug.current,
-    content,
-    image,
-    gallery,
-    showFormularioOcorrencias,
-    photographers[] {
-      photo,
-      name,
-      role,
-      description
-    }
-  }`
+	  title,
+	  "slug": slug.current,
+	  content,
+	  image,
+	  gallery,
+	  showFormularioOcorrencias,
+	  photographers[] {
+		photo,
+		name,
+		role,
+		description
+	  },
+	  editais[] {
+		title,
+		date,
+		file {
+		  asset->{
+			url
+		  }
+		}
+	  }
+	}`
 
   return sanityClient.fetch(query)
 })
