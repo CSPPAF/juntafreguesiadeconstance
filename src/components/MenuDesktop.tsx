@@ -1,13 +1,20 @@
 'use client'
 
 import { MenuItem } from './MenuDesktopTypes'
+import Image from 'next/image'
+import { urlFor } from '../../app/imageUrl'
 
 type Props = {
   menu: MenuItem[]
+  logo?: {
+    asset: {
+      _ref: string
+    }
+  }
   className?: string
 }
 
-export default function MenuDesktop({ menu, className = '' }: Props) {
+export default function MenuDesktop({ menu, logo, className = '' }: Props) {
   const handleClick = (href?: string) => {
     if (!href) return
 
@@ -20,7 +27,23 @@ export default function MenuDesktop({ menu, className = '' }: Props) {
 
   return (
     <nav className={`bg-white border-t border-gray-200 ${className}`}>
-      <ul className="flex justify-center gap-8 px-6 py-3 text-gray-800 font-medium">
+      <ul className="flex items-center justify-center gap-8 px-6 py-3 text-gray-800 font-medium">
+	    {logo && (
+		  <li className="mr-6 flex items-center">
+			<span
+			  onClick={() => (window.location.hash = '#inicio')}
+			  className="relative w-[40px] h-[40px] md:w-[54px] md:h-[54px] cursor-pointer"
+			  aria-label="Ir para o início"
+			>
+			  <Image
+				src={urlFor(logo)}
+				alt="Logotipo"
+				fill
+				className="object-contain"
+			  />
+			</span>
+		  </li>
+		)}
         {menu.map(item => (
           <li key={item.label} className="relative group/main">
             <span
