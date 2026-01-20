@@ -5,6 +5,9 @@ export type SanityHeader = {
   title?: string
   logo?: { asset: { _ref: string } }
   images?: { _ref: string }[]
+  email?: string
+  phone?: string
+  facebook?: string
 }
 
 export const getHeader = cache(async (): Promise<SanityHeader> => {
@@ -12,7 +15,11 @@ export const getHeader = cache(async (): Promise<SanityHeader> => {
     *[_type == "header"][0]{
       title,
       logo,
-      images
+      images,
+      email,
+      phone,
+      facebook
     }
   `)
 })
+
