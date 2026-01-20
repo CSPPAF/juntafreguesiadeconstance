@@ -183,7 +183,7 @@ export default function HomePage() {
       <Header header={header} />
 
       <div className="sticky top-0 z-50 bg-white">
-        <MenuDesktop menu={transformedMenu} className="hidden lg:block" />
+        <MenuDesktop menu={transformedMenu} logo={header.logo} className="hidden lg:block" />
         <MenuMobile menu={transformedMenu} className="block lg:hidden" />
       </div>
 
