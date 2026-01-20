@@ -36,9 +36,10 @@ export default defineType({
       type: 'image',
     }),
 	defineField({
-	  name: 'type',
-	  title: 'Tipo de Evento',
-	  type: 'string',
+	  name: 'types',
+	  title: 'Tipos de Evento',
+	  type: 'array',
+	  of: [{ type: 'string' }],
 	  options: {
 		list: [
 		  { title: 'Cultura', value: 'cultura' },
@@ -46,9 +47,9 @@ export default defineType({
 		  { title: 'Festas', value: 'festas' },
 		  { title: 'Institucional', value: 'institucional' },
 		],
-		layout: 'radio',
+		layout: 'tags', // ✅ UX muito melhor
 	  },
-	  validation: Rule => Rule.required(),
+	  validation: Rule => Rule.min(1).required(),
 	}),
   ],
 })
