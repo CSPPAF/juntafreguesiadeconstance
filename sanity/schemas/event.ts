@@ -39,17 +39,20 @@ export default defineType({
 	  name: 'types',
 	  title: 'Tipos de Evento',
 	  type: 'array',
-	  of: [{ type: 'string' }],
-	  options: {
-		list: [
-		  { title: 'Cultura', value: 'cultura' },
-		  { title: 'Desporto', value: 'desporto' },
-		  { title: 'Festas', value: 'festas' },
-		  { title: 'Institucional', value: 'institucional' },
-		],
-		layout: 'tags', // ✅ UX muito melhor
-	  },
-	  validation: Rule => Rule.min(1).required(),
+	  of: [
+		{
+		  type: 'string',
+		  options: {
+			list: [
+			  { title: 'Cultura', value: 'cultura' },
+			  { title: 'Desporto', value: 'desporto' },
+			  { title: 'Festas', value: 'festas' },
+			  { title: 'Institucional', value: 'institucional' },
+			],
+		  },
+		},
+	  ],
+	  validation: Rule => Rule.min(1),
 	}),
   ],
 })
