@@ -18,6 +18,21 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+    }),
+    defineField({
+      name: 'phone',
+      title: 'Contacto',
+      type: 'string',
+    }),
+    defineField({
+      name: 'facebook',
+      title: 'Facebook URL',
+      type: 'url',
+    }),
+    defineField({
       name: 'images',
       title: 'Galeria de Imagens',
       type: 'array',
