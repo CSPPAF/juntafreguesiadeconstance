@@ -6,7 +6,7 @@ export type SanityEvent = {
   slug: string
   date: string
   endDate?: string
-  type: string
+  types: string[]
   description?: PortableTextBlock[]
   image?: { asset: { url: string } }
 }
@@ -17,7 +17,7 @@ export async function getEvents(): Promise<SanityEvent[]> {
     "slug": slug.current,
     date,
     endDate,
-    type,
+    types,
     description,
     image {
       asset->{
@@ -28,3 +28,4 @@ export async function getEvents(): Promise<SanityEvent[]> {
 
   return sanityClient.fetch(query)
 }
+
