@@ -145,7 +145,7 @@ export default function HomePage() {
 
   // 🔹 Filtrar eventos por tipo
   const filteredEvents = eventType
-    ? events.filter(e => e.type?.toLowerCase() === eventType.toLowerCase())
+    ? events.filter(e => e.types?.includes(eventType))
     : events
 
   // 🔹 Evento em destaque (mais próximo no futuro)
