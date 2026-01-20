@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { urlFor } from '../../app/imageUrl'
 import { useEffect, useState } from 'react'
 import { SanityHeader } from '../../app/getHeader' // Importa o tipo correto
+import { Facebook } from 'lucide-react'
 
 type HeaderProps = {
   header: SanityHeader
@@ -19,12 +20,45 @@ export default function Header({ header }: HeaderProps) {
 		setCurrentIndex(prev => (prev + 1) % images.length)
 	  }, 3000)
 	  return () => clearInterval(interval)
+	  return () => clearInterval(interval)
   }, [header.images])
 
   if (!header || !header.images || header.images.length === 0) return null
 
   return (
     <header className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+	  
+	  {/* BARRA SUPERIOR */}
+	<div className="relative z-20 bg-white text-black text-sm">
+	  <div className="max-w-6xl mx-auto px-6 py-2 grid grid-cols-2 md:grid-cols-3 items-center">
+		
+		{/* ESQUERDA */}
+		<div className="flex flex-col md:flex-row gap-1 md:gap-4">
+		  {header.email && <span>📧 {header.email}</span>}
+		  {header.phone && <span>📞 {header.phone}</span>}
+		</div>
+
+		{/* CENTRO */}
+		<div className="hidden md:block"></div>
+
+		{/* DIREITA */}
+		<div className="flex justify-end">
+		  {header.facebook && (
+			<a
+			  href={header.facebook}
+			  target="_blank"
+			  rel="noopener noreferrer"
+			  aria-label="Facebook"
+			  className="hover:text-blue-600 transition"
+			>
+			  <Facebook className="w-5 h-5" />
+			</a>
+		  )}
+		</div>
+
+	  </div>
+	</div>
+
       {header.images.map((img, idx) => (
         <div
           key={img._ref || idx}
@@ -44,8 +78,8 @@ export default function Header({ header }: HeaderProps) {
 
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 h-full flex items-center px-6 max-w-6xl mx-auto">
-        <div className="flex flex-col items-center text-center md:flex-row md:items-center md:text-left gap-4">
+      <div className="relative z-10 h-full flex items-center justify-center px-6 max-w-6xl mx-auto">
+        <div className="flex flex-col items-center text-center gap-4 md:flex-row md:justify-center md:text-center">
           {header.logo && (
 			  <span
 				onClick={() => (window.location.hash = '#inicio')}
