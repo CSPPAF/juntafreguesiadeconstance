@@ -180,7 +180,7 @@ export default function HomePage() {
 
   return (
     <main id="top" className="min-h-screen scroll-smooth">
-      <Header header={header} />
+      <Header header={header} homeSectionId={homeSectionId} />
 
       <div className="sticky top-0 z-50 bg-white">
         <MenuDesktop menu={transformedMenu} logo={header.logo} className="hidden lg:block" />
