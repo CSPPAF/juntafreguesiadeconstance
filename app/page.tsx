@@ -334,73 +334,82 @@ export default function HomePage() {
 			)}
 
 			{section.twoColumnPDFs && section.twoColumnPDFs.length > 0 && (
-			  <div className="space-y-6 mt-10">
+			  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
 				{(() => {
-				  // Agrupa PDFs por ano
-				  const pdfsPorAno: Record<string, typeof section.twoColumnPDFs> = {}
+				  // 1️⃣ Agrupar por TÍTULO
+				  const groupedByTitle: Record<string, typeof section.twoColumnPDFs> = {}
 
-				  section.twoColumnPDFs.forEach(pdf => {
-					const year = pdf.year.toString()
-					if (!pdfsPorAno[year]) pdfsPorAno[year] = []
-					pdfsPorAno[year].push(pdf)
+				  section.twoColumnPDFs.forEach(item => {
+					if (!groupedByTitle[item.title]) {
+					  groupedByTitle[item.title] = []
+					}
+					groupedByTitle[item.title].push(item)
 				  })
 
-				  return Object.entries(pdfsPorAno)
-					.sort(([a], [b]) => parseInt(b) - parseInt(a))
-					.map(([year, pdfs]) => {
-					  const isOpen = openYear === year
+				  return Object.entries(groupedByTitle).map(([title, items]) => {
+					// 2️⃣ Agrupar por ANO dentro do título
+					const groupedByYear: Record<string, typeof items> = {}
 
-					  return (
-						<div key={year} className="border rounded-lg overflow-hidden">
-						  {/* HEADER DO ANO */}
-						  <button
-							onClick={() => setOpenYear(openYear === year ? null : year)}
-							className="w-full flex items-center justify-between text-left font-semibold text-blue-600 text-lg py-3 hover:text-blue-800 transition"
-						  >
-							<span>{year}</span>
-							{isOpen ? (
-							  <Minus className="w-5 h-5" />
-							) : (
-							  <Plus className="w-5 h-5" />
-							)}
-						  </button>
+					items.forEach(item => {
+					  const year = item.year.toString()
+					  if (!groupedByYear[year]) groupedByYear[year] = []
+					  groupedByYear[year].push(item)
+					})
 
-						  {/* CONTEÚDO (PDFS) */}
-						  {isOpen && (
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-white p-4">
-							  {pdfs.map((pdf, idx) => (
-								<div
-								  key={idx}
-								  className="border rounded-md p-4 flex flex-col gap-3"
+					return (
+					  <div key={title} className="space-y-4">
+						{/* 🔹 TÍTULO DA COLUNA */}
+						<h3 className="text-lg font-semibold text-gray-800">
+						  {title}
+						</h3>
+
+						{/* 🔹 ANOS */}
+						{Object.entries(groupedByYear)
+						  .sort(([a], [b]) => parseInt(b) - parseInt(a))
+						  .map(([year, yearItems]) => {
+							const isOpen = openYear === `${title}-${year}`
+
+							return (
+							  <div key={year} className="border rounded-lg overflow-hidden">
+								{/* HEADER DO ANO */}
+								<button
+								  onClick={() =>
+									setOpenYear(isOpen ? null : `${title}-${year}`)
+								  }
+								  className="w-full flex items-center justify-between text-left font-semibold text-blue-600 text-base py-3 px-4 hover:text-blue-800 transition"
 								>
-								  <p className="font-semibold text-gray-800">
-									{pdf.title}
-								  </p>
+								  <span>{year}</span>
+								  {isOpen ? (
+									<Minus className="w-5 h-5" />
+								  ) : (
+									<Plus className="w-5 h-5" />
+								  )}
+								</button>
 
-								  <div className="flex flex-col gap-2">
-									{pdf.files.map((file, fidx) => {
-									  const fileName = file.asset.originalFilename
-
-									  return (
+								{/* PDFs */}
+								{isOpen && (
+								  <div className="bg-white px-6 pb-4 pt-2 space-y-2">
+									{yearItems.flatMap(item =>
+									  item.files.map((file, idx) => (
 										<a
-										  key={fidx}
+										  key={idx}
 										  href={file.asset.url}
 										  target="_blank"
 										  rel="noopener noreferrer"
-										  className="text-blue-600 hover:underline text-sm"
+										  className="block text-blue-600 hover:underline text-sm"
 										>
-										  {fileName}
+										  {file.asset.originalFilename}
 										</a>
-									  )
-									})}
+									  ))
+									)}
 								  </div>
-								</div>
-							  ))}
-							</div>
-						  )}
-						</div>
-					  )
-					})
+								)}
+							  </div>
+							)
+						  })}
+					  </div>
+					)
+				  })
 				})()}
 			  </div>
 			)}
