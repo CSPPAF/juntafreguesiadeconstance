@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import * as Icons from 'lucide-react'
-import type { Icon as LucideIconType } from 'lucide-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { SanityHomeHighlight } from '../../app/getHomeHighlights'
+import React from 'react'
 
 type Props = {
   items: SanityHomeHighlight[]
@@ -47,8 +47,8 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {visibleItems.map((item, idx) => {
-            // ✅ Tipagem correta para os ícones
-            const Icon = (Icons as Record<string, LucideIconType>)[item.icon] ?? Icons.Circle
+            // ✅ Tipagem correta para componentes React
+            const Icon = (Icons as Record<string, React.ElementType>)[item.icon] ?? Icons.Circle
 
             return (
               <button
