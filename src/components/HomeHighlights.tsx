@@ -47,8 +47,9 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {visibleItems.map((item, idx) => {
-            // ✅ Tipagem correta para componentes React
-            const Icon = (Icons as Record<string, React.ElementType>)[item.icon] ?? Icons.Circle
+            // ✅ Correção segura do TypeScript
+            const IconName = item.icon
+            const Icon = ((Icons as unknown) as Record<string, React.ElementType>)[IconName] ?? Icons.Circle
 
             return (
               <button
