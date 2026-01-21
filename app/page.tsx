@@ -616,6 +616,7 @@ export default function HomePage() {
 	  {isHome && homeHighlights.length > 0 && (
 	    <HomeHighlights
 		  items={homeHighlights}
+		  eventosSlug={eventosSectionId}
 		  onGoToSection={(slug) => {
 		    setActiveSection(slug)
 		    setScrollFromFooter(true)
