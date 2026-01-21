@@ -8,9 +8,10 @@ import { Facebook } from 'lucide-react'
 
 type HeaderProps = {
   header: SanityHeader
+  homeSectionId: string
 }
 
-export default function Header({ header }: HeaderProps) {
+export default function Header({ header, homeSectionId }: HeaderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
@@ -82,7 +83,9 @@ export default function Header({ header }: HeaderProps) {
         <div className="flex flex-col items-center text-center gap-4 md:flex-row md:justify-center md:text-center">
           {header.logo && (
 			  <span
-				onClick={() => (window.location.hash = '#inicio')}
+				onClick={() => {
+				  window.location.hash = `#${homeSectionId}`
+				}}
 				className="
 				  relative cursor-pointer
 				  w-[150px] h-[150px]
