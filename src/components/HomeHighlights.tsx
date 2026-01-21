@@ -9,11 +9,12 @@ import React from 'react'
 type Props = {
   items: SanityHomeHighlight[]
   onGoToSection: (slug: string) => void
+  eventosSlug: string // nova prop para section Eventos
 }
 
 const ITEMS_PER_PAGE = 4
 
-export default function HomeHighlights({ items, onGoToSection }: Props) {
+export default function HomeHighlights({ items, onGoToSection, eventosSlug }: Props) {
   const [index, setIndex] = useState(0)
 
   const canPrev = index > 0
@@ -21,14 +22,21 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
   const visibleItems = items.slice(index, index + ITEMS_PER_PAGE)
 
-  const handleClick = (targetSlug: string) => {
-    const sectionId = targetSlug.replace(/^#/, '')
+  const handleClick = (targetSlug: string, itemIndex: number) => {
+    let sectionId = targetSlug.replace(/^#/, '')
+
+    // ✅ Regra especial: 4º destaque (índice 3) vai para a section Eventos do Footer
+    if (itemIndex === 3) {
+      sectionId = eventosSlug
+    }
 
     // Atualiza a hash
     window.location.hash = `#${sectionId}`
 
-    // Atualiza o state e scroll
+    // Atualiza o state
     onGoToSection(sectionId)
+
+    // Scroll suave
     const el = document.getElementById(sectionId)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
@@ -47,14 +55,13 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {visibleItems.map((item, idx) => {
-            // ✅ Correção segura do TypeScript
             const IconName = item.icon
             const Icon = ((Icons as unknown) as Record<string, React.ElementType>)[IconName] ?? Icons.Circle
 
             return (
               <button
                 key={idx}
-                onClick={() => handleClick(item.targetSlug)}
+                onClick={() => handleClick(item.targetSlug, idx)}
                 className="flex flex-col items-center gap-2 hover:scale-105 transition"
               >
                 <Icon className="w-10 h-10 text-blue-600" />
