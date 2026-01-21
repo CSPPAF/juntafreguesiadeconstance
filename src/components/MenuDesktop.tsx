@@ -11,10 +11,11 @@ type Props = {
       _ref: string
     }
   }
+  homeSectionId: string
   className?: string
 }
 
-export default function MenuDesktop({ menu, logo, className = '' }: Props) {
+export default function MenuDesktop({ menu, logo, homeSectionId, className = '' }: Props) {
   const handleClick = (href?: string) => {
     if (!href) return
 
@@ -31,7 +32,7 @@ export default function MenuDesktop({ menu, logo, className = '' }: Props) {
 	    {logo && (
 		  <li className="mr-6 flex items-center">
 			<span
-			  onClick={() => (window.location.hash = '#inicio')}
+			  onClick={() => (window.location.hash = `#${homeSectionId}`)}
 			  className="relative w-[40px] h-[40px] md:w-[54px] md:h-[54px] cursor-pointer"
 			  aria-label="Ir para o início"
 			>
