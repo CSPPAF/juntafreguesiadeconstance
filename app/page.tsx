@@ -423,10 +423,27 @@ export default function HomePage() {
             )}
 
             {section.showFormularioOcorrencias && (
-              <div className="mt-8">
-                <FormularioOcorrencia />
-              </div>
-            )}
+			  <div
+				className="mt-12 relative rounded-xl overflow-hidden"
+				style={
+				  section.ocorrenciasBackground
+					? {
+						backgroundImage: `url(${urlFor(section.ocorrenciasBackground)})`,
+						backgroundSize: 'cover',
+						backgroundPosition: 'center',
+					  }
+					: undefined
+				}
+			  >
+				{/* Overlay escuro (como no site exemplo) */}
+				<div className="absolute inset-0 bg-black/50" />
+
+				{/* Conteúdo */}
+				<div className="relative z-10 p-8 md:p-12 text-center">
+				  <FormularioOcorrencia />
+				</div>
+			  </div>
+			)}
           </section>
         )
       })}
