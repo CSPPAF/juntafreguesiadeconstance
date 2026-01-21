@@ -14,6 +14,7 @@ import Calendar from '@/components/Calendar'
 import EventFilter from '@/components/EventFilter'
 import PortableTextRenderer from '@/lib/PortableTextRenderer'
 import { MenuItem } from '@/components/MenuDesktopTypes'
+import HomeHighlights from '@/components/HomeHighlights'
 
 import { getMenu } from './getMenu'
 import { getSections } from './getSections'
@@ -21,6 +22,7 @@ import { getHeader } from './getHeader'
 import { getNews, SanityNews } from './getNews'
 import { getEvents, SanityEvent } from './getEvents'
 import { urlFor } from './imageUrl'
+import { getHomeHighlights, SanityHomeHighlight } from './getHomeHighlights'
 
 import { SanityHeader } from './getHeader'
 import { SanityMenuItem } from './getMenu'
@@ -58,6 +60,7 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('')
   const [scrollFromFooter, setScrollFromFooter] = useState(false) // 🔑 novo flag
   const [openYear, setOpenYear] = useState<string | null>(null)
+  const [homeHighlights, setHomeHighlights] = useState<SanityHomeHighlight[]>([])
 
   const [eventType, setEventType] = useState<string | null>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -83,6 +86,7 @@ export default function HomePage() {
 
     getNews().then(setNews)
     getEvents().then(setEvents)
+	getHomeHighlights().then(setHomeHighlights)
   }, [])
 
   /* 🔹 Hash inicial */
@@ -607,6 +611,17 @@ export default function HomePage() {
           <PortableTextRenderer value={item.content} />
         </section>
       ))}
+
+	  {/* ---------- DESTAQUES DA HOME ---------- */}
+	  {isHome && homeHighlights.length > 0 && (
+	    <HomeHighlights
+		  items={homeHighlights}
+		  onGoToSection={(slug) => {
+		    setActiveSection(slug)
+		    setScrollFromFooter(true)
+		  }}
+	    />
+	  )}
 
       {showScrollTop && (
         <button
