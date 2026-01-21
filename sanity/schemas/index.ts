@@ -4,5 +4,7 @@ import section from './sections'
 import footer from './footer'
 import news from './news'
 import event from './event'
+import homeHighlight from './homeHighlight'
 
-export const schemaTypes = [header, menu, section, footer, news, event]
+export const schemaTypes = [header, menu, section, footer, news, event, homeHighlight]
+
