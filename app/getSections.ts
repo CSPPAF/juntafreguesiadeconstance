@@ -9,6 +9,7 @@ export type SanitySection = {
   image?: { asset: { _ref: string } }
   gallery?: { asset: { _ref: string } }[]
   showFormularioOcorrencias?: boolean
+  ocorrenciasBackground?: { asset: { _ref: string } }
   photographers?: {
     photo?: { asset: { _ref: string } }
     name?: string
@@ -44,6 +45,7 @@ export const getSections = cache(async (): Promise<SanitySection[]> => {
   image,
   gallery,
   showFormularioOcorrencias,
+  ocorrenciasBackground,
   photographers[] {
     photo,
     name,
