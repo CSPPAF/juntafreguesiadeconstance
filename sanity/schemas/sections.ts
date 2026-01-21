@@ -73,6 +73,14 @@ export default defineType({
 	}),
 	
 	defineField({
+	  name: 'ocorrenciasBackground',
+	  title: 'Imagem de fundo (Ocorrências)',
+	  type: 'image',
+	  description: 'Imagem de fundo atrás do botão/formulário de ocorrências',
+	  options: { hotspot: true },
+	}),
+	
+	defineField({
 	  name: 'editais',
 	  title: 'Editais (PDF)',
 	  type: 'array',
