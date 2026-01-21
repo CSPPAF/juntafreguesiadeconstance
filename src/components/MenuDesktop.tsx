@@ -6,21 +6,25 @@ import { urlFor } from '../../app/imageUrl'
 
 type Props = {
   menu: MenuItem[]
-  logo?: {
-    asset: {
-      _ref: string
-    }
-  }
+  logo?: { asset: { _ref: string } }
   homeSectionId: string
   className?: string
 }
 
 export default function MenuDesktop({ menu, logo, homeSectionId, className = '' }: Props) {
+  // Função centralizada para scroll
+  const goToSection = (sectionId?: string) => {
+    if (!sectionId) return
+    if (!sectionId.startsWith('#')) sectionId = `#${sectionId}`
+    window.location.hash = sectionId
+    const el = document.getElementById(sectionId.replace(/^#/, ''))
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const handleClick = (href?: string) => {
     if (!href) return
-
     if (href.startsWith('#')) {
-      window.location.hash = href
+      goToSection(href)
     } else {
       window.location.href = href
     }
@@ -29,22 +33,23 @@ export default function MenuDesktop({ menu, logo, homeSectionId, className = '' 
   return (
     <nav className={`bg-white border-t border-gray-200 ${className}`}>
       <ul className="flex items-center justify-center gap-8 px-6 py-3 text-gray-800 font-medium">
-	    {logo && (
-		  <li className="mr-6 flex items-center">
-			<span
-			  onClick={() => (window.location.hash = `#${homeSectionId}`)}
-			  className="relative w-[40px] h-[40px] md:w-[54px] md:h-[54px] cursor-pointer"
-			  aria-label="Ir para o início"
-			>
-			  <Image
-				src={urlFor(logo)}
-				alt="Logotipo"
-				fill
-				className="object-contain"
-			  />
-			</span>
-		  </li>
-		)}
+        {logo && (
+          <li className="mr-6 flex items-center">
+            <span
+              onClick={() => goToSection(homeSectionId)}
+              className="relative w-[40px] h-[40px] md:w-[46px] md:h-[46px] cursor-pointer"
+              aria-label="Ir para o início"
+            >
+              <Image
+                src={urlFor(logo)}
+                alt="Logotipo"
+                fill
+                className="object-contain"
+              />
+            </span>
+          </li>
+        )}
+
         {menu.map(item => (
           <li key={item.label} className="relative group/main">
             <span
