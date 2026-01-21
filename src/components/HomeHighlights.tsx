@@ -53,21 +53,29 @@ export default function HomeHighlights({ items, onGoToSection, eventosSlug }: Pr
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {visibleItems.map((item, idx) => {
-            // ✅ Correção segura do TypeScript para ícones
-            const IconName = item.icon
-            const Icon = ((Icons as unknown) as Record<string, React.ElementType>)[IconName] ?? Icons.Circle
+		  const IconName = item.icon
+		  const Icon =
+			((Icons as unknown) as Record<string, React.ElementType>)[IconName] ??
+			Icons.Circle
 
-            return (
-              <button
-                key={idx}
-                onClick={() => handleClick(item.targetSlug)}
-                className="flex flex-col items-center gap-2 hover:scale-105 transition"
-              >
-                <Icon className="w-10 h-10 text-blue-600" />
-                <div className="font-bold text-lg">{item.titleTop}</div>
-              </button>
-            )
-          })}
+		  const rawSlug = item.targetSlug.replace(/^#/, '')
+		  const sectionId =
+			rawSlug.toLowerCase() === 'eventos' ? eventosSlug : rawSlug
+
+		  return (
+			<a
+			  key={idx}
+			  href={`#${sectionId}`}   // ✅ ISTO é o segredo
+			  onClick={() => {
+				onGoToSection(sectionId)
+			  }}
+			  className="flex flex-col items-center gap-2 hover:scale-105 transition cursor-pointer"
+			>
+			  <Icon className="w-10 h-10 text-blue-600" />
+			  <div className="font-bold text-lg">{item.titleTop}</div>
+			</a>
+		  )
+		})}
         </div>
 
         {canNext && (
