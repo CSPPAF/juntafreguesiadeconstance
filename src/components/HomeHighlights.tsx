@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import * as Icons from 'lucide-react'
+import type { Icon as LucideIconType } from 'lucide-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { SanityHomeHighlight } from '../../app/getHomeHighlights'
 
@@ -22,6 +23,7 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
   const handleClick = (targetSlug: string) => {
     const sectionId = targetSlug.replace(/^#/, '')
+
     // Atualiza a hash
     window.location.hash = `#${sectionId}`
 
@@ -45,7 +47,8 @@ export default function HomeHighlights({ items, onGoToSection }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {visibleItems.map((item, idx) => {
-            const Icon = (Icons as any)[item.icon] ?? Icons.Circle
+            // ✅ Tipagem correta para os ícones
+            const Icon = (Icons as Record<string, LucideIconType>)[item.icon] ?? Icons.Circle
 
             return (
               <button
