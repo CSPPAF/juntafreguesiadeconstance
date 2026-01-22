@@ -16,6 +16,7 @@ import PortableTextRenderer from '@/lib/PortableTextRenderer'
 import { MenuItem } from '@/components/MenuDesktopTypes'
 import HomeHighlights from '@/components/HomeHighlights'
 import InstitutionalLinks from '@/components/InstitutionalLinks'
+import AvisosHighlights from '@/components/AvisosHighlights'
 
 import { getMenu } from './getMenu'
 import { getSections } from './getSections'
@@ -25,6 +26,7 @@ import { getEvents, SanityEvent } from './getEvents'
 import { urlFor } from './imageUrl'
 import { getHomeHighlights, SanityHomeHighlight } from './getHomeHighlights'
 import { getInstitutionalLinks, SanityInstitutionalLink } from './getInstitutionalLinks'
+import { getAvisos, SanityAviso } from './getAvisos'
 
 import { SanityHeader } from './getHeader'
 import { SanityMenuItem } from './getMenu'
@@ -64,6 +66,7 @@ export default function HomePage() {
   const [openYear, setOpenYear] = useState<string | null>(null)
   const [homeHighlights, setHomeHighlights] = useState<SanityHomeHighlight[]>([])
   const [institutionalLinks, setInstitutionalLinks] = useState<SanityInstitutionalLink[]>([])
+  const [avisos, setAvisos] = useState<SanityAviso[]>([])
 
   const [eventType, setEventType] = useState<string | null>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -91,6 +94,7 @@ export default function HomePage() {
     getEvents().then(setEvents)
 	getHomeHighlights().then(setHomeHighlights)
 	getInstitutionalLinks().then(setInstitutionalLinks)
+	getAvisos().then(setAvisos)
   }, [])
 
   /* 🔹 Hash inicial */
@@ -621,6 +625,10 @@ export default function HomePage() {
           <PortableTextRenderer value={item.content} />
         </section>
       ))}
+
+	  {isHome && avisos.length > 0 && (
+	    <AvisosHighlights items={avisos} />
+      )}
 
 	  {/* ---------- DESTAQUES DA HOME ---------- */}
 	  {isHome && homeHighlights.length > 0 && (
