@@ -44,10 +44,11 @@ export default defineType({
 		  type: 'string',
 		  options: {
 			list: [
-			  { title: 'Cultura', value: 'cultura' },
+			  { title: 'Festividades', value: 'festividades' },
 			  { title: 'Desporto', value: 'desporto' },
-			  { title: 'Festas', value: 'festas' },
+			  { title: 'Associações', value: 'associacoes' },
 			  { title: 'Institucional', value: 'institucional' },
+			  { title: 'Comissão de Festas', value: 'festas' },
 			],
 		  },
 		},
