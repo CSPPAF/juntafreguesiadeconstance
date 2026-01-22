@@ -6,7 +6,7 @@ const TYPES = [
   { label: 'Desporto', value: 'desporto' },
   { label: 'Associações', value: 'associacoes' },
   { label: 'Institucional', value: 'institucional' },
-  { title: 'Comissão de Festas', value: 'festas' },
+  { label: 'Comissão de Festas', value: 'festas' },
 ]
 
 export default function EventFilter({
