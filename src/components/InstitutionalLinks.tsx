@@ -23,7 +23,7 @@ export default function InstitutionalLinks({ items }: Props) {
   return (
     <section className="border-t bg-gray-50 py-6">
       <div className="max-w-6xl mx-auto px-5">
-		<h3 className="mb-8 flex flex-col items-center">
+	    <h3 className="mb-8 flex flex-col items-center">
 		  <div className="flex items-center gap-2 text-lg font-semibold text-gray-700">
 			<Link className="w-5 h-5 text-blue-600" />
 			<span>Links Úteis</span>
@@ -36,7 +36,11 @@ export default function InstitutionalLinks({ items }: Props) {
 		  {canPrev && (
 			<button
 			  onClick={() => setIndex(index - ITEMS_PER_PAGE)}
-			  className="absolute -left-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 z-10" // aumentei -left-4 → -left-10 e z-10 para sobrepor
+			  className="
+				absolute top-1/2 -translate-y-1/2 z-10
+				left-2 md:-left-10
+				bg-white shadow rounded-full p-2
+			  "
 			>
 			  <ChevronLeft />
 			</button>
@@ -70,7 +74,11 @@ export default function InstitutionalLinks({ items }: Props) {
 		  {canNext && (
 			<button
 			  onClick={() => setIndex(index + ITEMS_PER_PAGE)}
-			  className="absolute -right-10 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-2 z-10"
+			  className="
+				absolute top-1/2 -translate-y-1/2 z-10
+				right-2 md:-right-10
+				bg-white shadow rounded-full p-2
+			  "
 			>
 			  <ChevronRight />
 			</button>
