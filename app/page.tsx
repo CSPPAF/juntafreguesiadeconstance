@@ -222,14 +222,20 @@ export default function HomePage() {
               </div>
 
               {hasImage && (
-                <Image
-                  src={urlFor(section.image!)}
-                  alt={section.title}
-                  width={220}
-                  height={280}
-                  className="rounded-md shadow-md object-cover mx-auto md:mx-0"
-                />
-              )}
+			    <Image
+				  src={urlFor(section.image!)}
+				  alt={section.title}
+				  width={220}
+				  height={280}
+				  className="
+				    rounded-md shadow-md object-cover
+				    mx-auto md:mx-0
+				    w-[220px] h-[280px]
+				    md:w-[300px] md:h-[380px]
+				    lg:w-[360px] lg:h-[440px]
+				  "
+			    />
+			  )}
             </div>
 
             {/* Fotografias (Executivo) */}
