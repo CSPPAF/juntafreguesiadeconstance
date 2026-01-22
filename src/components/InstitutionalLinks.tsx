@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Link } from 'lucide-react'
 import { SanityInstitutionalLink } from '../../app/getInstitutionalLinks'
 import { urlFor } from '../../app/imageUrl'
 
@@ -23,6 +23,10 @@ export default function InstitutionalLinks({ items }: Props) {
   return (
     <section className="border-t bg-gray-50 py-6">
       <div className="max-w-6xl mx-auto px-5">
+		<h3 className="text-center text-lg font-semibold text-gray-700 mb-8">
+		  <Link className="w-5 h-5 text-gray-700" />
+          Links Úteis
+        </h3>
 
         <div className="relative">
 		  {canPrev && (
