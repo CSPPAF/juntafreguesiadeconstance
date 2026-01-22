@@ -2,10 +2,11 @@
 
 const TYPES = [
   { label: 'Todos', value: '' }, // mudar null para ''
-  { label: 'Cultura', value: 'cultura' },
+  { label: 'Festividades', value: 'festividades' },
   { label: 'Desporto', value: 'desporto' },
-  { label: 'Festas', value: 'festas' },
+  { label: 'Associações', value: 'associacoes' },
   { label: 'Institucional', value: 'institucional' },
+  { title: 'Comissão de Festas', value: 'festas' },
 ]
 
 export default function EventFilter({
