@@ -6,6 +6,8 @@ import news from './news'
 import event from './event'
 import homeHighlight from './homeHighlight'
 import institutionalLink from './institutionalLink'
+import aviso from './aviso'
 
-export const schemaTypes = [header, menu, section, footer, news, event, homeHighlight, institutionalLink]
+export const schemaTypes = [header, menu, section, footer, news, event, homeHighlight, institutionalLink, aviso]
+
 
