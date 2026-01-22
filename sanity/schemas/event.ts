@@ -55,5 +55,23 @@ export default defineType({
 	  ],
 	  validation: Rule => Rule.min(1),
 	}),
+	
+	defineField({
+	  name: 'association',
+	  title: 'Associação',
+	  type: 'string',
+	  options: {
+		list: [
+		  { title: 'Constance Telling', value: 'constance' },
+		  { title: 'AMCC', value: 'amcc' },
+		  { title: 'Rancho', value: 'rancho' },
+		  { title: 'Arco', value: 'arco' },
+		  { title: 'Elas', value: 'elas' },
+		  { title: 'Associação Desportiva', value: 'desportiva' },
+		  { title: 'Comissão de Festas', value: 'festas' },
+		],
+	  },
+	  hidden: ({ document }) => !document?.types?.includes('associacoes'),
+	})
   ],
 })
