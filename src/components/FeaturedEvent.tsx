@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { SanityEvent } from '../../app/getEvents'
 import { urlFor } from '../../app/imageUrl'
+import { ASSOCIATION_COLORS } from './eventColors'
 
 export default function FeaturedEvent({
   event,
@@ -13,9 +14,14 @@ export default function FeaturedEvent({
 }) {
   if (!event) return null
 
+  const color =
+    event.association
+      ? ASSOCIATION_COLORS[event.association].replace('bg-', 'text-')
+      : 'text-blue-600'
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
-      <h2 className="text-3xl font-bold text-blue-600 mb-6">
+      <h2 className={`text-3xl font-bold mb-6 ${color}`}>
         Evento em Destaque
       </h2>
 
@@ -38,7 +44,7 @@ export default function FeaturedEvent({
             {new Date(event.date).toLocaleDateString('pt-PT')}
           </p>
           <h3 className="text-2xl font-semibold mb-4">{event.title}</h3>
-          <p className="text-blue-600 font-medium">Ver detalhes →</p>
+          <p className="font-medium">Ver detalhes →</p>
         </div>
       </div>
     </div>
