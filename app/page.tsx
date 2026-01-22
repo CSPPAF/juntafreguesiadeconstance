@@ -15,6 +15,7 @@ import EventFilter from '@/components/EventFilter'
 import PortableTextRenderer from '@/lib/PortableTextRenderer'
 import { MenuItem } from '@/components/MenuDesktopTypes'
 import HomeHighlights from '@/components/HomeHighlights'
+import InstitutionalLinks from '@/components/InstitutionalLinks'
 
 import { getMenu } from './getMenu'
 import { getSections } from './getSections'
@@ -23,6 +24,7 @@ import { getNews, SanityNews } from './getNews'
 import { getEvents, SanityEvent } from './getEvents'
 import { urlFor } from './imageUrl'
 import { getHomeHighlights, SanityHomeHighlight } from './getHomeHighlights'
+import { getInstitutionalLinks, SanityInstitutionalLink } from './getInstitutionalLinks'
 
 import { SanityHeader } from './getHeader'
 import { SanityMenuItem } from './getMenu'
@@ -61,6 +63,7 @@ export default function HomePage() {
   const [scrollFromFooter, setScrollFromFooter] = useState(false) // 🔑 novo flag
   const [openYear, setOpenYear] = useState<string | null>(null)
   const [homeHighlights, setHomeHighlights] = useState<SanityHomeHighlight[]>([])
+  const [institutionalLinks, setInstitutionalLinks] = useState<SanityInstitutionalLink[]>([])
 
   const [eventType, setEventType] = useState<string | null>(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
@@ -87,6 +90,7 @@ export default function HomePage() {
     getNews().then(setNews)
     getEvents().then(setEvents)
 	getHomeHighlights().then(setHomeHighlights)
+	getInstitutionalLinks().then(setInstitutionalLinks)
   }, [])
 
   /* 🔹 Hash inicial */
@@ -638,6 +642,10 @@ export default function HomePage() {
           <ChevronUp size={22} />
         </button>
       )}
+
+	  {isHome && institutionalLinks.length > 0 && (
+		<InstitutionalLinks items={institutionalLinks} />
+	  )}
 
       <Footer 
         eventosSlug={eventosSectionId} 
