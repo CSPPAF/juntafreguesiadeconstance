@@ -71,7 +71,7 @@ export default defineType({
 		  { title: 'Comissão de Festas', value: 'festas' },
 		],
 	  },
-	  hidden: ({ document }) => !document?.types?.includes('associacoes'),
+	  hidden: ({ document }) => !Array.isArray(document?.types) || !document.types.includes('associacoes'),
 	})
   ],
 })
