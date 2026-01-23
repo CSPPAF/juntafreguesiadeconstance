@@ -18,16 +18,18 @@ export default function ModalEvent({ event, onClose }: ModalProps) {
       : 'bg-blue-600'
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white max-w-lg w-full rounded shadow-lg overflow-hidden relative">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white max-w-lg w-full rounded shadow-lg overflow-hidden relative max-h-[90vh] flex flex-col">
 
-        <div className={`${color} text-white p-4`}>
+        {/* Cabeçalho */}
+        <div className={`${color} text-white p-4 flex-shrink-0`}>
           <h2 className="text-2xl font-bold">{event.title}</h2>
           <p className="text-sm opacity-90">
             {new Date(event.date).toLocaleDateString('pt-PT')}
           </p>
         </div>
 
+        {/* Botão fechar */}
         <button
           className="absolute top-4 right-4 text-white"
           onClick={onClose}
@@ -35,7 +37,8 @@ export default function ModalEvent({ event, onClose }: ModalProps) {
           <ChevronUp size={24} />
         </button>
 
-        <div className="p-6">
+        {/* Conteúdo rolável */}
+        <div className="p-6 overflow-y-auto">
           {event.image && (
             <Image
               src={event.image.asset.url}
