@@ -82,7 +82,7 @@ export default function Calendar({ events }: CalendarProps) {
               {/* Bolinha (mantida) */}
               {hasEvent && (
 				  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1">
-					{dayEvents.map((e, i) => {
+					{dayEvents.slice(0, 3).map((e, i) => {
 					  const color =
 						e.association
 						  ? ASSOCIATION_COLORS[e.association]
