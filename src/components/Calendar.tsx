@@ -80,7 +80,8 @@ export default function Calendar({ events }: CalendarProps) {
           return (
             <div
               key={day}
-              className={`relative border p-2 text-center rounded cursor-pointer transition
+              className={`relative border p-2 rounded cursor-pointer transition
+                flex flex-col items-center
                 ${hasEvent ? 'bg-blue-100 hover:bg-blue-200' : ''}
               `}
               title={hasEvent ? dayEvents.map(e => e.title).join(', ') : ''}
@@ -94,11 +95,14 @@ export default function Calendar({ events }: CalendarProps) {
                 }
               }}
             >
-              {day}
+              {/* Número do dia */}
+              <span className="text-sm font-medium leading-none">
+                {day}
+              </span>
 
-              {/* 🔵 Bolinhas (mantidas + responsivas) */}
+              {/* 🔵 Bolinhas (logo abaixo do número) */}
               {hasEvent && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1 sm:bottom-1 md:bottom-2">
+                <div className="mt-1 flex items-center gap-1">
                   {dayEvents.slice(0, maxDots).map((e, i) => {
                     const color =
                       e.association
