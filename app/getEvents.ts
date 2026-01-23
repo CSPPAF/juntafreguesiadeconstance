@@ -2,6 +2,7 @@ import { sanityClient } from '../sanityClient'
 import { PortableTextBlock } from '@portabletext/types'
 
 export type SanityEvent = {
+  _id: string
   title: string
   slug: string
   date: string
@@ -21,6 +22,7 @@ export type SanityEvent = {
 
 export async function getEvents(): Promise<SanityEvent[]> {
   const query = `*[_type == "event"] | order(date asc) {
+    _id,
     title,
     "slug": slug.current,
     date,
