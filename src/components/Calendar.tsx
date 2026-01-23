@@ -62,12 +62,7 @@ export default function Calendar({ events }: CalendarProps) {
           const dayEvents = getEventsOfDay(day, currentMonth)
           const hasEvent = dayEvents.length > 0
           const event = dayEvents[0]
-
-          const dotColor =
-            event?.association
-              ? ASSOCIATION_COLORS[event.association]
-              : 'bg-blue-600'
-
+		
           return (
             <div
               key={day}
