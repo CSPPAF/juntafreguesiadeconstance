@@ -81,21 +81,27 @@ export default function Calendar({ events }: CalendarProps) {
 
               {/* Bolinha (mantida) */}
               {hasEvent && (
-				  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1">
-					{dayEvents.slice(0, 3).map((e, i) => {
-					  const color =
-						e.association
-						  ? ASSOCIATION_COLORS[e.association]
-						  : 'bg-blue-600'
+				  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1">
+				  {dayEvents.slice(0, 3).map((e, i) => {
+					const color =
+					  e.association
+						? ASSOCIATION_COLORS[e.association]
+						: 'bg-blue-600'
 
-					  return (
-						<span
-						  key={i}
-						  className={`w-2 h-2 rounded-full ${color}`}
-						/>
-					  )
-					})}
-				  </div>
+					return (
+					  <span
+						key={i}
+						className={`w-2 h-2 rounded-full ${color}`}
+					  />
+					)
+				  })}
+
+				  {dayEvents.length > 3 && (
+					<span className="text-[10px] text-gray-700">
+					  +{dayEvents.length - 3}
+					</span>
+				  )}
+				</div>
 			  )}
             </div>
           )
